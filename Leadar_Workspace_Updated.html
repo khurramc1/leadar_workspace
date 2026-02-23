@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadar.Digital — Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A2342;--navy2:#0F3060;--navy3:#162d4f;
+  --teal:#00C2A8;--teal-lt:#E6FAF8;--teal-mid:rgba(0,194,168,.15);
+  --gold:#F5A623;--gold-lt:#FEF9EE;
+  --red:#E53E3E;--red-lt:#FFF5F5;
+  --green:#1E7E4A;--green-lt:#EAF6EE;
+  --off:#F7F9FC;--border:rgba(10,35,66,.09);
+  --text:#1A202C;--muted:#718096;--white:#fff;
+  --card-shadow:0 2px 12px rgba(10,35,66,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);min-height:100vh}
+input,textarea,select{font-family:'Outfit',sans-serif}
+
+/* ══ UNIFIED TOPBAR ══════════════════════════════════ */
+#unified-topbar{
+  position:sticky;top:0;z-index:300;
+  background:var(--navy);border-bottom:2px solid var(--teal);
+  height:54px;display:flex;align-items:center;
+  padding:0 24px;gap:20px;
+}
+.utb-brand{font-family:'Playfair Display',serif;font-size:18px;color:#fff;white-space:nowrap;flex-shrink:0}
+.utb-brand span{color:var(--teal)}
+.mode-switcher{display:flex;gap:3px;background:rgba(255,255,255,.08);border-radius:8px;padding:3px;flex-shrink:0}
+.mode-btn{
+  padding:5px 15px;border-radius:6px;border:none;
+  background:transparent;color:rgba(255,255,255,.5);
+  font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.mode-btn.active{background:var(--teal);color:var(--navy)}
+.mode-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;flex-shrink:0}
+.utb-ops-badge{
+  background:var(--gold);color:var(--navy);border-radius:8px;
+  font-size:10px;font-family:'DM Mono',monospace;font-weight:700;
+  padding:2px 6px;display:none;
+}
+.utb-spacer{flex:1}
+.utb-actions{display:flex;align-items:center;gap:8px}
+#pg-topbar-actions{display:flex;align-items:center;gap:10px}
+#ops-topbar-actions{display:flex;align-items:center;gap:8px;display:none}
+.utb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;
+  cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .2s;white-space:nowrap;
+}
+.utb-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;flex-shrink:0}
+.utb-ghost{background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12)}
+.utb-ghost:hover{background:rgba(255,255,255,.13);color:#fff}
+.utb-teal{background:var(--teal);color:var(--navy)}
+.utb-teal:hover{filter:brightness(1.08)}
+.utb-gold{background:var(--gold);color:var(--navy)}
+.utb-gold:hover{filter:brightness(1.05)}
+.pbar-wrap{display:flex;align-items:center;gap:8px}
+.pbar{width:120px;height:4px;background:rgba(255,255,255,.15);border-radius:2px}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:2px;transition:width .4s;width:0%}
+.ppct{font-size:11px;color:rgba(255,255,255,.5);font-family:'DM Mono',monospace}
+
+/* ══ APP VIEWS ══════════════════════════════════ */
+#pg-wrap{display:block}
+#ops-wrap{display:none}
+
+/* ══ PROPOSAL GENERATOR FORM ══════════════════════ */
+.fbody{display:flex;min-height:calc(100vh - 54px)}
+.fside{width:228px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:10px 0}
+.fside::-webkit-scrollbar{width:0}
+.sni{display:flex;align-items:center;gap:9px;padding:8px 17px;cursor:pointer;border-left:3px solid transparent;transition:all .2s}
+.sni:hover{background:var(--teal-lt)}
+.sni.active{border-left-color:var(--teal);background:var(--teal-lt)}
+.sni.done{border-left-color:rgba(0,194,168,.35)}
+.sni-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);flex-shrink:0;transition:all .3s}
+.sni.active .sni-dot{background:var(--teal);border-color:var(--teal);color:var(--navy);font-weight:700}
+.sni.done .sni-dot{background:var(--teal-lt);border-color:var(--teal);color:var(--teal)}
+.sni.done .sni-dot::after{content:'✓';font-size:10px}
+.sni.done .sni-dot span{display:none}
+.sni-lbl{font-size:12px;color:var(--muted);transition:color .2s}
+.sni.active .sni-lbl{color:var(--navy);font-weight:600}
+.sni.done .sni-lbl{color:var(--text)}
+.fmain{flex:1;overflow-y:auto;height:calc(100vh - 54px)}
+.fsec{display:none;padding:42px 50px 130px;animation:fIn .3s ease}
+.fsec.active{display:block}
+@keyframes fIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fey{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.fh1{font-family:'Playfair Display',serif;font-size:29px;color:var(--navy);margin-bottom:9px;line-height:1.2}
+.fsub{font-size:14px;color:var(--muted);line-height:1.6;max-width:560px;margin-bottom:26px}
+.fg{margin-bottom:20px}.fg.hidden{display:none!important}
+.fl{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.fl .r{color:var(--teal);margin-left:2px}
+.fhint{font-size:11.5px;color:var(--muted);margin-bottom:7px;line-height:1.5}
+.fi{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Outfit',sans-serif;color:var(--text);background:#fff;outline:none;transition:all .2s;appearance:none}
+.fi:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,194,168,.13)}
+.fi::placeholder{color:rgba(113,128,150,.5)}
+textarea.fi{resize:vertical;min-height:86px;line-height:1.6}
+select.fi{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%230A2342'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+/* Form pill wrappers (radio/checkbox) */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.pill{position:relative}
+.pill input{position:absolute;opacity:0;width:0;height:0}
+.pill label{display:block;padding:6px 14px;border:1.5px solid var(--border);border-radius:18px;font-size:13px;cursor:pointer;transition:all .2s;background:#fff;color:var(--muted);white-space:nowrap}
+.pill label:hover{border-color:var(--teal);color:var(--text)}
+.pill input:checked+label{background:var(--teal-lt);border-color:var(--teal);color:var(--navy);font-weight:600}
+.comp-hdr{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-bottom:5px}
+.comp-hdr span{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.comp-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-bottom:7px}
+.pr-row{display:grid;grid-template-columns:30px 1fr;gap:9px;align-items:center;margin-bottom:7px}
+.prnum{width:30px;height:30px;border-radius:50%;background:var(--teal-lt);border:1.5px solid rgba(0,194,168,.3);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);font-weight:600;flex-shrink:0}
+.kpi-hdr{display:grid;grid-template-columns:190px 1fr 1fr;gap:9px;margin-bottom:5px}
+.kpi-hdr span{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.kpi-row{display:grid;grid-template-columns:190px 1fr 1fr;gap:9px;margin-bottom:7px;align-items:center}
+.kpi-m{background:var(--off);border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:12.5px;font-weight:500;color:var(--navy)}
+.dvdr{display:flex;align-items:center;gap:9px;margin:22px 0 13px}
+.dvdr::after{content:'';flex:1;height:1px;background:var(--border)}
+.dvdr-lbl{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap}
+.ibox{background:var(--navy);border-radius:9px;padding:15px 18px;display:flex;gap:13px;margin-bottom:20px}
+.ibox-icon{font-size:19px;flex-shrink:0}.ibox-txt{font-size:13px;color:rgba(255,255,255,.7);line-height:1.6}
+.ibox-txt strong{color:var(--teal)}
+.ffoot{position:fixed;bottom:0;left:228px;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:13px 50px;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.ffoot-info{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
+.btn-row{display:flex;gap:9px}
+.btn{display:flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .2s}
+.btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.b-sec{background:var(--off);color:var(--muted);border:1.5px solid var(--border)}
+.b-sec:hover{color:var(--text);border-color:rgba(10,35,66,.2)}
+.b-nav{background:var(--navy);color:#fff;box-shadow:0 3px 10px rgba(10,35,66,.2)}
+.b-nav:hover{background:var(--navy2);transform:translateY(-1px)}
+.b-gen{background:var(--teal);color:var(--navy);box-shadow:0 3px 10px rgba(0,194,168,.22)}
+.b-gen:hover{filter:brightness(1.05);transform:translateY(-1px)}
+
+/* ══ PROPOSAL OUTPUT ══════════════════════════════ */
+.ptbar{background:var(--navy);padding:11px 36px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:54px;z-index:100;border-bottom:2px solid var(--teal)}
+.ptbar-l{display:flex;align-items:center;gap:13px}
+.ptbar-brand{font-family:'Playfair Display',serif;font-size:17px;color:#fff}
+.ptbar-brand span{color:var(--teal)}
+.ptbar-badge{background:rgba(0,194,168,.15);border:1px solid rgba(0,194,168,.3);color:var(--teal);font-size:10px;padding:3px 9px;border-radius:10px;font-family:'DM Mono',monospace;letter-spacing:.5px}
+.pdoc{max-width:880px;margin:36px auto 60px;background:#fff;box-shadow:0 4px 36px rgba(10,35,66,.1)}
+.pcover{min-height:100vh;background:var(--navy);display:flex;flex-direction:column;position:relative;overflow:hidden;page-break-after:always}
+.cg1{position:absolute;right:-80px;top:-80px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(0,194,168,.12),transparent 70%)}
+.cg2{position:absolute;left:-60px;bottom:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%)}
+.ctop{padding:44px 52px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.c-logo{font-family:'Playfair Display',serif;font-size:22px;color:#fff}.c-logo span{color:var(--teal)}
+.c-tag{font-size:10px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+.c-ref{text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);line-height:1.8}
+.ccenter{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 52px}
+.c-eye{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--teal);text-transform:uppercase;margin-bottom:18px}
+.c-h1{font-family:'Playfair Display',serif;font-size:50px;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:22px}
+.c-h1 em{color:var(--teal);font-style:normal}
+.c-div{width:56px;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:2px;margin-bottom:22px}
+.c-sub{font-size:15px;color:rgba(255,255,255,.55);line-height:1.65;max-width:480px;margin-bottom:44px}
+.c-meta{display:flex;gap:40px;flex-wrap:wrap}
+.c-mi .lbl{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:5px}
+.c-mi .val{font-size:14px;color:#fff;font-weight:500}.c-mi .val.t{color:var(--teal)}
+.cbot{padding:24px 52px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.08)}
+.cbot-l{font-size:12.5px;color:rgba(255,255,255,.45)}
+.cbot-l strong{color:rgba(255,255,255,.8);display:block;margin-bottom:2px}
+.cbot-r{font-size:10px;color:rgba(255,255,255,.25);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.phdr{background:var(--navy);padding:11px 52px;display:flex;align-items:center;justify-content:space-between}
+.phdr-l{font-family:'Playfair Display',serif;font-size:14px;color:#fff}.phdr-l span{color:var(--teal)}
+.phdr-r{font-size:11px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace}
+@media screen{.phdr{display:none}}
+.ps{padding:42px 52px;border-bottom:1px solid var(--border);page-break-inside:avoid}
+.ps:last-child{border-bottom:none}
+.ps.bb{page-break-before:always}.ps.ab{page-break-inside:auto}
+.p-bar{display:flex;align-items:stretch;margin-bottom:22px}
+.p-num{width:36px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
+.p-ttl{flex:1;background:var(--navy);padding:10px 18px;font-size:12.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#fff}
+.pbody{font-size:13.5px;color:var(--text);line-height:1.75;margin-bottom:13px}
+.pmuted{font-size:12.5px;color:var(--muted);line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1.5px solid var(--border);border-radius:7px;overflow:hidden;margin:20px 0}
+.stat{padding:17px 13px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat.hi{background:var(--gold-lt);border-bottom:2px solid var(--gold)}
+.stat-n{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy);font-weight:700;line-height:1}
+.stat-n.t{color:var(--teal)}.stat-n.g{color:var(--gold)}
+.stat-l{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.card{background:var(--off);border:1.5px solid var(--border);border-radius:8px;padding:16px;box-shadow:var(--card-shadow)}
+.card.tc{border-color:rgba(0,194,168,.4);background:var(--teal-lt)}
+.card.gc{border-color:rgba(245,166,35,.4);background:var(--gold-lt)}
+.card.nc{background:var(--navy);border-color:var(--navy)}
+.card.grc{border-color:var(--green);background:var(--green-lt)}
+.card-t{font-size:11.5px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.card.nc .card-t{color:var(--teal)}.card.grc .card-t{color:var(--green)}
+.card-b{font-size:13px;color:var(--muted);line-height:1.65}
+.card.nc .card-b{color:rgba(255,255,255,.7)}
+.dual{display:grid;grid-template-columns:1fr 4px 1fr;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);margin:16px 0}
+.tr{padding:20px 17px}
+.tr-seo{background:var(--teal-lt)}.tr-geo{background:var(--gold-lt)}
+.tr-div{background:linear-gradient(180deg,var(--teal),var(--gold))}
+.tr-eye{font-size:10px;font-family:'DM Mono',monospace;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.tr-seo .tr-eye{color:var(--teal)}.tr-geo .tr-eye{color:var(--gold)}
+.tr-h{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:11px}
+.tr-i{font-size:12.5px;color:var(--text);padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06);display:flex;gap:7px}
+.tr-i:last-child{border-bottom:none}
+.tr-ic{font-weight:700;flex-shrink:0}
+.tr-seo .tr-ic{color:var(--teal)}.tr-geo .tr-ic{color:var(--gold)}
+.di{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)}
+.di:last-child{border-bottom:none}
+.di-icon{font-size:22px;flex-shrink:0;width:34px;text-align:center;margin-top:2px}
+.di-t{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.di-d{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:6px}
+.di-c{font-size:12.5px;color:var(--text);display:flex;gap:6px;margin-bottom:3px}
+.di-c::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0}
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--teal),var(--gold))}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-dot{position:absolute;left:-24px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--teal);border:2px solid #fff;box-shadow:0 0 0 2px var(--teal)}
+.tl-p{font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.tl-d{font-size:11px;color:var(--teal);font-family:'DM Mono',monospace;margin-bottom:5px}
+.tl-t{font-size:12.5px;color:var(--muted);display:flex;gap:6px;margin-bottom:3px}
+.tl-t::before{content:'→';color:var(--teal);flex-shrink:0}
+.ptbl{width:100%;border-collapse:collapse;margin:13px 0;font-size:13px}
+.ptbl th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.ptbl td{padding:9px 14px;border-bottom:1px solid var(--border)}
+.ptbl .tr-tot td{background:var(--gold-lt);border-top:2px solid var(--gold);font-weight:700}
+.ptbl .pc{color:var(--teal);font-weight:700}
+.ptbl .tr-tot .pc{color:var(--gold);font-size:15px}
+.miles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0}
+.mile{background:var(--off);border:1.5px solid var(--border);border-radius:7px;padding:13px;text-align:center}
+.mile:first-child{border-color:var(--teal);background:var(--teal-lt)}
+.mile-lbl{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.mile-d{font-size:11.5px;color:var(--text);margin-bottom:7px;line-height:1.4}
+.mile-p{font-family:'Playfair Display',serif;font-size:21px;color:var(--navy);font-weight:700}
+.mile-a{font-size:12px;color:var(--teal);font-weight:600;margin-top:3px}
+.prompt-tbl{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}
+.prompt-tbl td{padding:7px 11px;border-bottom:1px solid var(--border);color:var(--text)}
+.prompt-tbl tr:nth-child(even) td{background:var(--off)}
+.prompt-tbl .ptn{width:30px;color:var(--teal);font-family:'DM Mono',monospace;font-weight:600}
+.cmp-tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px}
+.cmp-tbl th{padding:9px 13px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.cmp-tbl th:first-child{background:var(--off);color:var(--muted);text-align:left}
+.cmp-tbl th:nth-child(2){background:#eee;color:var(--muted);text-align:center}
+.cmp-tbl th:last-child{background:var(--navy);color:var(--teal);text-align:center}
+.cmp-tbl td{padding:9px 13px;border-bottom:1px solid var(--border)}
+.cmp-tbl td:first-child{color:var(--muted);font-weight:500}
+.cmp-tbl td:nth-child(2){color:var(--muted);text-align:center}
+.cmp-tbl td:last-child{color:var(--teal);font-weight:600;text-align:center}
+.sog{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-top:18px}
+.sob{border:1.5px solid var(--border);border-radius:8px;padding:20px}
+.sob.nb{background:var(--navy);border-color:var(--navy)}
+.sob-t{font-size:11px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:13px}
+.sf{border-bottom:1px solid rgba(0,0,0,.09);margin-bottom:11px;padding-bottom:9px;display:flex;align-items:flex-end;gap:9px;min-height:33px}
+.sob.nb .sf{border-color:rgba(255,255,255,.12)}
+.sf-lbl{font-size:12px;color:var(--muted);white-space:nowrap;font-weight:500}
+.sob.nb .sf-lbl{color:rgba(255,255,255,.45)}
+.sf-val{font-size:13px;color:var(--text);font-weight:500}
+.sob.nb .sf-val{color:#fff}
+.abox{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:9px;padding:17px 21px;margin:13px 0;display:flex;gap:14px;align-items:flex-start}
+.abox-i{font-size:19px;flex-shrink:0}
+.abox-b{font-size:13px;color:rgba(255,255,255,.73);line-height:1.65}
+.abox-b strong{color:var(--teal)}
+.p-content{background:#fff}
+
+/* ══ OPS DASHBOARD ════════════════════════════════ */
+.tabs{display:flex;gap:2px;padding:0 28px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:54px;z-index:100}
+.tab{padding:13px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--navy);border-bottom-color:var(--teal)}
+.tab-badge{background:var(--teal-lt);color:var(--teal);font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:8px;font-weight:700}
+.tab-badge.warn{background:#FFF5F5;color:var(--red)}
+.view{display:none;padding:28px;animation:fadeUp .25s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.row{display:flex;gap:18px;margin-bottom:18px;align-items:flex-start}
+.col{flex:1;min-width:0}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sh-l{display:flex;align-items:center;gap:10px}
+.sh-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:2px;text-transform:uppercase}
+.sh-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy)}
+.sh-sub{font-size:13px;color:var(--muted);margin-top:3px}
+/* Ops cards */
+.ocard{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--card-shadow)}
+.ocard.navy{background:var(--navy);border-color:var(--navy)}
+.ocard.teal{border-color:rgba(0,194,168,.35);background:var(--teal-lt)}
+.ocard.gold{border-color:rgba(245,166,35,.35);background:var(--gold-lt)}
+.ocard.red{border-color:rgba(229,62,62,.35);background:var(--red-lt)}
+.ocard.green{border-color:rgba(30,126,74,.35);background:var(--green-lt)}
+.card-label{font-size:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px}
+.ocard.navy .card-label{color:rgba(255,255,255,.4)}
+.card-val{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1}
+.ocard.navy .card-val{color:var(--teal)}
+.card-sub{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4}
+.ocard.navy .card-sub{color:rgba(255,255,255,.5)}
+/* Ops form elements (same naming, compatible) */
+/* Ops buttons */
+.btn-primary{background:var(--teal);color:var(--navy);box-shadow:0 2px 8px rgba(0,194,168,.2);display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .2s}
+.btn-primary:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-primary svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.btn-navy{background:var(--navy);color:#fff;display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .2s}
+.btn-navy:hover{background:var(--navy2)}
+.btn-ghost{background:var(--off);color:var(--muted);border:1.5px solid var(--border);display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.btn-ghost:hover{color:var(--text);border-color:rgba(10,35,66,.2)}
+.btn-danger{background:var(--red-lt);color:var(--red);border:1.5px solid rgba(229,62,62,.2);display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px}
+/* Status pills (ops) — named .spill to avoid conflict with form .pill */
+.spill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;font-family:'DM Mono',monospace}
+.spill-green{background:var(--green-lt);color:var(--green)}
+.spill-gold{background:var(--gold-lt);color:#B7761A}
+.spill-red{background:var(--red-lt);color:var(--red)}
+.spill-teal{background:var(--teal-lt);color:#007A6B}
+.spill-navy{background:rgba(10,35,66,.07);color:var(--navy)}
+.spill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+/* Capacity bars */
+.cap-bar-wrap{margin:6px 0}
+.cap-bar-track{height:8px;background:var(--off);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.cap-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.cap-ok{background:linear-gradient(90deg,var(--teal),#00a08a)}
+.cap-warn{background:linear-gradient(90deg,var(--gold),#e8941f)}
+.cap-over{background:linear-gradient(90deg,var(--red),#c53030)}
+.cap-label{display:flex;justify-content:space-between;font-size:11px;font-family:'DM Mono',monospace;margin-top:4px}
+/* Ops table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border);line-height:1.4;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--off)}
+.tbl .num{font-family:'DM Mono',monospace;font-size:12px}
+.tbl .action-cell{display:flex;gap:5px;justify-content:flex-end}
+/* Campaign card */
+.cc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:var(--card-shadow);margin-bottom:14px;transition:box-shadow .2s}
+.cc:hover{box-shadow:0 4px 20px rgba(10,35,66,.1)}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.cc-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);font-weight:700}
+.cc-meta{font-size:12px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace}
+.cc-right{display:flex;align-items:center;gap:8px}
+.cc-body{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.cc-stat{text-align:center;padding:10px 8px;background:var(--off);border-radius:7px}
+.cc-stat-n{font-family:'DM Mono',monospace;font-size:15px;font-weight:700;color:var(--navy)}
+.cc-stat-l{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.cc-progress{margin-top:4px}
+.cc-prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px}
+.cc-prog-track{height:5px;background:var(--off);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.cc-prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;transition:width .5s}
+/* Timeline */
+.tl-grid{overflow-x:auto;margin-top:14px}
+.tl-table{border-collapse:collapse;font-size:12px;min-width:100%}
+.tl-table th{background:var(--navy);color:rgba(255,255,255,.6);padding:7px 10px;font-size:10px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.06)}
+.tl-table th.task-col{text-align:left;width:220px;background:var(--navy2)}
+.tl-table td{padding:7px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle}
+.tl-table td.task-name{font-size:12px;color:var(--text);white-space:nowrap;background:#fff;font-weight:500}
+.tl-table td.task-name .role-tag{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;display:block;margin-top:1px}
+.tl-cell{width:100%;height:22px;border-radius:4px;background:transparent}
+.tl-cell.active{background:var(--teal);opacity:.8}
+.tl-cell.partial{background:var(--gold);opacity:.8}
+.tl-cell.done{background:var(--green);opacity:.7}
+.tl-month-group th{border-right:2px solid rgba(255,255,255,.15)!important}
+/* Heatmap */
+.hm-cell{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'DM Mono',monospace;font-weight:600;cursor:default;transition:transform .15s}
+.hm-cell:hover{transform:scale(1.15)}
+.hm-0{background:#f0f0f0;color:#aaa}
+.hm-1{background:#d4f5f0;color:#007a6b}
+.hm-2{background:#a0e8dc;color:#005f54}
+.hm-3{background:#fef3cd;color:#9a6800}
+.hm-4{background:#fdd68a;color:#7d4e00}
+.hm-5{background:#fca5a5;color:#9b1c1c}
+.hm-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.hm-name{font-size:12px;font-weight:600;color:var(--navy);width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-cells{display:flex;gap:4px}
+.hm-header{display:flex;gap:4px;margin-bottom:6px;padding-left:136px}
+.hm-h{width:28px;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);text-align:center;letter-spacing:.5px}
+/* Person card */
+.person-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;flex-shrink:0}
+.person-name{font-size:14px;font-weight:700;color:var(--navy)}
+.person-role{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:2px}
+.person-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+/* Hire alert */
+.hire-alert{background:var(--navy);border-left:4px solid var(--gold);border-radius:8px;padding:16px 18px;margin-bottom:14px;display:flex;gap:14px;align-items:flex-start}
+.ha-icon{font-size:22px;flex-shrink:0}
+.ha-title{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:3px}
+.ha-body{font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.6}
+.ha-body strong{color:#fff}
+/* Modal */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,35,66,.5);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:12px;width:600px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(10,35,66,.25)}
+.modal-head{background:var(--navy);border-radius:12px 12px 0 0;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Playfair Display',serif;font-size:17px;color:#fff}
+.modal-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:20px;cursor:pointer;padding:0 4px;line-height:1}
+.modal-close:hover{color:#fff}
+.modal-body{padding:24px}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end}
+/* Empty state */
+.empty{text-align:center;padding:60px 20px}
+.empty-icon{font-size:48px;margin-bottom:14px}
+.empty-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:8px}
+.empty-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:380px;margin:0 auto 20px}
+/* Misc */
+.divider{height:1px;background:var(--border);margin:20px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-family:'DM Mono',monospace;background:var(--teal-lt);color:var(--teal);margin:2px}
+.warn-text{color:var(--red);font-size:12px;font-weight:600}
+input[type="range"]{accent-color:var(--teal)}
+
+/* ══ TOAST ═══════════════════════════════════════ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 24px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;z-index:9999;border:1px solid var(--teal);box-shadow:0 4px 20px rgba(0,0,0,.3);transition:opacity .4s;opacity:0;pointer-events:none}
+#toast.show{opacity:1}
+
+/* ══ PRINT ═══════════════════════════════════════ */
+@media print{
+  @page{size:A4;margin:0}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff}
+  #unified-topbar,#ops-wrap,.ptbar,#app-form{display:none!important}
+  #pg-wrap,#app-proposal{display:block!important}
+  .pdoc{max-width:100%;margin:0;box-shadow:none}
+  .pcover{min-height:100vh;page-break-after:always}
+  .ps{page-break-inside:avoid}
+  .ps.ab{page-break-inside:auto}
+  .ps.bb{page-break-before:always}
+  .phdr{display:flex!important}
+  .stats,.dual,.ptbl,.miles,.sog{page-break-inside:avoid}
+}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(10,35,66,.15);border-radius:3px}
+
+/* ══ OPS MISSING CSS ══════════════════════════════ */
+.import-panel{background:var(--navy);border-radius:10px;padding:20px;margin-bottom:20px}
+.import-panel-title{font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.import-panel p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:14px}
+.code-block{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);line-height:1.7;margin-bottom:14px}
+.person-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--card-shadow)}
+</style>
+</head>
+<body>
+
+<!-- ════════════ UNIFIED TOPBAR ════════════ -->
+<div id="unified-topbar">
+  <div class="utb-brand">LEADAR<span>.DIGITAL</span></div>
+  <div class="mode-switcher">
+    <button class="mode-btn active" id="mode-proposal" onclick="switchAppView('proposal')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Proposal Generator
+    </button>
+    <button class="mode-btn" id="mode-ops" onclick="switchAppView('ops')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Ops Dashboard
+      <span class="utb-ops-badge" id="ops-campaign-badge"></span>
+    </button>
+  </div>
+  <div class="utb-spacer"></div>
+
+  <!-- Proposal mode actions -->
+  <div id="pg-topbar-actions">
+    <div class="pbar-wrap"><div class="pbar"><div class="pbar-fill" id="pbar"></div></div><div class="ppct" id="ppct">0%</div></div>
+    <button class="utb-btn utb-ghost" onclick="confirmLoadSample()" style="font-size:12px">Load Sample</button>
+    <button class="utb-btn utb-ghost" onclick="confirmClear()" style="font-size:12px">Clear</button>
+    <button class="utb-btn utb-teal" onclick="generateProposal()">
+      <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Generate
+    </button>
+  </div>
+
+  <!-- Ops mode actions -->
+  <div id="ops-topbar-actions" style="display:none">
+    <button class="utb-btn utb-ghost" onclick="exportData()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Export
+    </button>
+    <button class="utb-btn utb-ghost" onclick="document.getElementById('importFile').click()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+      Import
+    </button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="utb-btn utb-teal" onclick="openModal('campaign')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Campaign
+    </button>
+  </div>
+</div>
+
+<!-- ════════════ PROPOSAL GENERATOR WRAP ════════════ -->
+<div id="pg-wrap">
+
+<!-- FORM APP -->
+<div id="app-form">
+<div class="fbody">
+<nav class="fside" id="fside"></nav>
+<div class="fmain" id="fmain">
+
+<div class="fsec active" data-s="1">
+  <div class="fey">Section 01 — 12</div><h1 class="fh1">Client Overview</h1>
+  <p class="fsub">Industry selection dynamically personalises every section that follows — GEO prompts, keyword placeholders, and audience framing all adapt automatically.</p>
+  <div class="g2">
+    <div class="fg"><label class="fl">Company Name <span class="r">*</span></label><input class="fi" type="text" id="f_co" placeholder="e.g. JNS Design &amp; Build Pte Ltd"></div>
+    <div class="fg"><label class="fl">Website URL</label><input class="fi" type="url" id="f_web" placeholder="https://www.jnsdesignbuild.com"></div>
+  </div>
+  <div class="fg">
+    <label class="fl">Industry <span class="r">*</span></label>
+    <div class="pills">
+      <div class="pill"><input type="radio" name="ind" id="i_pm" value="Property Management" onchange="onInd(this.value)"><label for="i_pm">🏢 Property Management</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_hr" value="Recruitment & HR" onchange="onInd(this.value)"><label for="i_hr">👥 Recruitment &amp; HR</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_hc" value="Healthcare" onchange="onInd(this.value)"><label for="i_hc">🏥 Healthcare</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_it" value="IT & Technology" onchange="onInd(this.value)"><label for="i_it">💻 IT &amp; Technology</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_lg" value="Logistics" onchange="onInd(this.value)"><label for="i_lg">🚚 Logistics</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_fs" value="Financial Services" onchange="onInd(this.value)"><label for="i_fs">💰 Financial Services</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_id" value="Interior Design & Renovation" onchange="onInd(this.value)"><label for="i_id">🏠 Interior Design &amp; Renovation</label></div>
+      <div class="pill"><input type="radio" name="ind" id="i_ot" value="Other B2B" onchange="onInd(this.value)"><label for="i_ot">🏷️ Other</label></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Sub-Niche / Specialisation</label><input class="fi" type="text" id="f_niche" placeholder="e.g. One-stop ID + aircon specialist, HDB/condo/landed, SG + JB operations"></div>
+    <div class="fg"><label class="fl">Business Age</label><select class="fi" id="f_age"><option value="">Select...</option><option>Less than 1 year</option><option>1–2 years</option><option>3–5 years</option><option>6–10 years</option><option>10+ years</option></select></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Primary Contact</label><input class="fi" type="text" id="f_contact" placeholder="e.g. Jane, Director"></div>
+    <div class="fg"><label class="fl">Contact Email</label><input class="fi" type="email" id="f_email" placeholder="email@company.com"></div>
+  </div>
+  <div class="fg">
+    <label class="fl">Geographic Target</label>
+    <div class="pills">
+      <div class="pill"><input type="radio" name="geo" id="g_sg" value="Singapore"><label for="g_sg">🇸🇬 Singapore only</label></div>
+      <div class="pill"><input type="radio" name="geo" id="g_jb" value="Singapore + Johor Bahru"><label for="g_jb">🇸🇬🇲🇾 SG + JB</label></div>
+      <div class="pill"><input type="radio" name="geo" id="g_ap" value="Singapore + APAC"><label for="g_ap">🌏 SG + APAC</label></div>
+      <div class="pill"><input type="radio" name="geo" id="g_gl" value="Global"><label for="g_gl">🌐 Global</label></div>
+    </div>
+  </div>
+</div>
+
+<div class="fsec" data-s="2">
+  <div class="fey">Section 02 — 12</div><h1 class="fh1">Products &amp; Services</h1>
+  <p class="fsub">List each service on a separate line. Vague descriptions produce vague keyword strategies — specificity is everything.</p>
+  <div class="fg"><label class="fl">Core Services <span class="r">*</span></label><div class="fhint">One per line</div><textarea class="fi" id="f_svcs" rows="6" placeholder="e.g.&#10;Interior Design — HDB, condo, landed, commercial&#10;Full &amp; partial renovation&#10;Airconditioning — installation, servicing, chemical wash, repair&#10;One-stop renovation + aircon packages&#10;Project management from concept to handover"></textarea></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Key Differentiators</label><textarea class="fi" id="f_diff" rows="4" placeholder="e.g. Rare combination of ID + aircon under one roof, SG + JB operations, transparent package pricing, director-level personal service"></textarea></div>
+    <div class="fg"><label class="fl">Awards / Certifications</label><textarea class="fi" id="f_certs" rows="4" placeholder="e.g. BCA licensed renovation contractor, NEA registered aircon contractor, CaseTrust accredited, strong Carousell review history"></textarea></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Price Positioning</label><div class="pills"><div class="pill"><input type="radio" name="pp" id="pp_b" value="Budget-friendly"><label for="pp_b">Budget-friendly</label></div><div class="pill"><input type="radio" name="pp" id="pp_m" value="Mid-market"><label for="pp_m">Mid-market</label></div><div class="pill"><input type="radio" name="pp" id="pp_p" value="Premium"><label for="pp_p">Premium</label></div></div></div>
+    <div class="fg"><label class="fl">Average Project / Contract Value</label><input class="fi" type="text" id="f_deal" placeholder="e.g. SGD 15,000–80,000 renovation; SGD 50–500+ aircon services"></div>
+  </div>
+  <div class="fg"><label class="fl">Notable Clients / Projects</label><input class="fi" type="text" id="f_clients" placeholder="e.g. HDB BTO clients across 12 estates, commercial shopfronts, Johor Bahru landed properties"></div>
+</div>
+
+<div class="fsec" data-s="3">
+  <div class="fey">Section 03 — 12</div><h1 class="fh1">Target Audience</h1>
+  <p class="fsub">Understanding who their buyers are shapes every keyword and every GEO prompt. The more specific, the better the output.</p>
+  <div class="g2">
+    <div class="fg"><label class="fl">Who Are Their Clients? <span class="r">*</span></label><textarea class="fi" id="f_audience" rows="4" placeholder="e.g. HDB owners on MOP, BTO recipients getting keys, condo upgraders, young families doing first renovation, commercial property managers needing aircon servicing contracts"></textarea></div>
+    <div class="fg"><label class="fl">Their Pain Points <span class="r">*</span></label><textarea class="fi" id="f_pain" rows="4" placeholder="e.g. Scared of being scammed, overwhelmed by quotes, don't want to manage multiple contractors, worried about hidden costs, need trustworthy aircon servicing"></textarea></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Buying Triggers</label><textarea class="fi" id="f_triggers" rows="3" placeholder="e.g. Key collection date approaching, HDB renovation permit approved, aircon broke down, preparing for CNY, friend just finished beautiful renovation"></textarea></div>
+    <div class="fg"><label class="fl">Objections / Hesitations</label><textarea class="fi" id="f_objections" rows="3" placeholder="e.g. Horror renovation stories on HDB forums, comparing too many quotes, unsure about package inclusions, worried about post-project support"></textarea></div>
+  </div>
+</div>
+
+<div class="fsec" data-s="4">
+  <div class="fey">Section 04 — 12</div><h1 class="fh1">Competitor Analysis</h1>
+  <p class="fsub">URLs go into Semrush for keyword gap analysis and Otterly.ai for AI visibility comparison. Include aggregators like Qanvast — they dominate renovation search.</p>
+  <div class="ibox"><div class="ibox-icon">💡</div><div class="ibox-txt"><strong>Include aggregator platforms too</strong> — Qanvast, Livspace, and Renotalk often rank above individual ID firms. Understanding their keyword dominance is essential for planning your content strategy around them, not just against individual competitors.</div></div>
+  <div class="comp-hdr"><span>Competitor</span><span>Website URL</span><span>Strengths</span><span>Weaknesses</span></div>
+  <div id="comp-rows"></div>
+</div>
+
+<div class="fsec" data-s="5">
+  <div class="fey">Section 05 — 12</div><h1 class="fh1">Current Digital Presence</h1>
+  <p class="fsub">Honest baselines. Approximate numbers are fine — Semrush gives us exact figures during the Week 1 audit.</p>
+  <div class="g3">
+    <div class="fg"><label class="fl">Monthly Traffic</label><input class="fi" type="text" id="f_traffic" placeholder="e.g. ~200 visits/month"></div>
+    <div class="fg"><label class="fl">Domain Authority</label><input class="fi" type="text" id="f_da" placeholder="e.g. DA 6–8"></div>
+    <div class="fg"><label class="fl">Current Google Rankings</label><input class="fi" type="text" id="f_rankings" placeholder="e.g. None significant"></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Previous Marketing Work</label><textarea class="fi" id="f_prev" rows="3" placeholder="e.g. Basic Wix site, Carousell listings, Facebook page. No SEO, no GA4, no Search Console. Relies on referrals and Carousell."></textarea></div>
+    <div class="fg"><label class="fl">PR &amp; Media Mentions</label><textarea class="fi" id="f_pr" rows="3" placeholder="e.g. Good Carousell reviews, some Google Maps reviews, HDB forum word-of-mouth. No press coverage yet."></textarea></div>
+  </div>
+  <div class="fg"><label class="fl">Active Platforms</label>
+    <div class="pills">
+      <div class="pill"><input type="checkbox" id="sp_fb" value="Facebook"><label for="sp_fb">Facebook</label></div>
+      <div class="pill"><input type="checkbox" id="sp_ig" value="Instagram"><label for="sp_ig">Instagram</label></div>
+      <div class="pill"><input type="checkbox" id="sp_tk" value="TikTok"><label for="sp_tk">TikTok</label></div>
+      <div class="pill"><input type="checkbox" id="sp_ca" value="Carousell"><label for="sp_ca">Carousell</label></div>
+      <div class="pill"><input type="checkbox" id="sp_yt" value="YouTube"><label for="sp_yt">YouTube</label></div>
+      <div class="pill"><input type="checkbox" id="sp_gb" value="Google Business Profile"><label for="sp_gb">Google Business Profile</label></div>
+    </div>
+  </div>
+</div>
+
+<div class="fsec" data-s="6">
+  <div class="fey">Section 06 — 12</div><h1 class="fh1">SEO Keyword Intelligence</h1>
+  <p class="fsub">Feeds directly into Semrush keyword research and Surfer SEO content briefs. Industry-specific placeholders appear automatically based on your Section 1 selection.</p>
+  <div class="fg"><label class="fl">Money / Commercial Intent Keywords <span class="r">*</span></label><div class="fhint">What someone types when ready to hire or enquire</div><textarea class="fi" id="f_mkw" rows="4" placeholder="e.g.&#10;interior design company Singapore&#10;HDB renovation Singapore&#10;aircon installation Singapore HDB&#10;renovation contractor Singapore condo&#10;one stop renovation Singapore"></textarea></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Informational Keywords</label><div class="fhint">Questions asked before deciding</div><textarea class="fi" id="f_ikw" rows="4" placeholder="e.g.&#10;how much does HDB renovation cost Singapore&#10;how to choose interior designer Singapore&#10;best aircon brand for Singapore HDB&#10;renovation timeline BTO Singapore"></textarea></div>
+    <div class="fg"><label class="fl">Local / Specific Keywords</label><textarea class="fi" id="f_lkw" rows="4" placeholder="e.g.&#10;interior design Jalan Kembangan&#10;renovation contractor east Singapore&#10;aircon servicing Bedok Tampines&#10;one stop renovation HDB 4 room Johor Bahru"></textarea></div>
+  </div>
+  <div class="fg"><label class="fl">Keywords to Avoid</label><input class="fi" type="text" id="f_avoid" placeholder="e.g. furniture (not their product), real estate terms, employment/job search queries"></div>
+</div>
+
+<div class="fsec" data-s="7">
+  <div class="fey">Section 07 — 12</div><h1 class="fh1">GEO — AI Search Strategy</h1>
+  <p class="fsub">The section that separates a 2026 strategy from a 2022 one. The 15 prompts here become the weekly Otterly.ai monitoring list from Day 1.</p>
+  <div class="ibox"><div class="ibox-icon">🤖</div><div class="ibox-txt"><strong>Think like the homeowner:</strong> What would they type into ChatGPT at the very start of their renovation journey? Write full conversational questions — not keywords. Good example: <em>"How do I find a reliable interior designer for my HDB in Singapore?"</em><br>Bad example: <em>"ID Singapore"</em></div></div>
+  <div class="fg"><label class="fl">Ideal AI Description of This Brand</label><div class="fhint">If ChatGPT described this company in 2–3 sentences, what should it say? Write the ideal answer.</div><textarea class="fi" id="f_aidesc" rows="4" placeholder="e.g. JNS Design &amp; Build is a Singapore one-stop interior design and renovation studio with a unique specialisation in airconditioning — allowing homeowners to complete their entire renovation including aircon under one trusted contractor. They serve HDB, condo, landed and commercial properties across Singapore and Johor Bahru, known for transparent pricing and hands-on project management."></textarea></div>
+  <div class="dvdr"><span class="dvdr-lbl">15 AI Monitoring Prompts for Otterly.ai</span></div>
+  <div id="prompt-rows"></div>
+</div>
+
+<div class="fsec" data-s="8">
+  <div class="fey">Section 08 — 12</div><h1 class="fh1">Campaign Goals &amp; KPIs</h1>
+  <p class="fsub">The targets we'll report against every month. Clear goals before the campaign starts = honest evaluation at Month 6.</p>
+  <div class="g2">
+    <div class="fg"><label class="fl">Package <span class="r">*</span></label>
+      <div class="pills" style="flex-direction:column;gap:7px">
+        <div class="pill"><input type="radio" name="pkg" id="pk_f" value="Startup" onchange="onPkg(this.value)"><label for="pk_f">Startup — Digital foundation, branding &amp; content marketing</label></div>
+        <div class="pill"><input type="radio" name="pkg" id="pk_g" value="Accelerated" onchange="onPkg(this.value)"><label for="pk_g">Accelerated — Everything in Startup + email &amp; telemarketing ★</label></div>
+        <div class="pill"><input type="radio" name="pkg" id="pk_d" value="Growth" onchange="onPkg(this.value)"><label for="pk_d">Growth — Everything in Accelerated + ORM, PR &amp; AI tools</label></div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Campaign Start Date</label><input class="fi" type="date" id="f_start"></div>
+  </div>
+  <div class="dvdr"><span class="dvdr-lbl">KPI Targets</span></div>
+  <div class="kpi-hdr"><span>Metric</span><span>Current Baseline</span><span>Month 6 Target</span></div>
+  <div id="kpi-rows"></div>
+</div>
+
+<div class="fsec" data-s="9">
+  <div class="fey">Section 09 — 12</div><h1 class="fh1">Content &amp; Brand Voice</h1>
+  <p class="fsub">How every article, caption, and landing page sounds. Consistent voice is what builds brand recognition in both Google and AI search results.</p>
+  <div class="fg"><label class="fl">Primary Tone of Voice</label>
+    <div class="pills">
+      <div class="pill"><input type="radio" name="tone" id="t_wm" value="Warm & Trustworthy"><label for="t_wm">Warm &amp; Trustworthy</label></div>
+      <div class="pill"><input type="radio" name="tone" id="t_pr" value="Professional"><label for="t_pr">Professional</label></div>
+      <div class="pill"><input type="radio" name="tone" id="t_bd" value="Bold & Direct"><label for="t_bd">Bold &amp; Direct</label></div>
+      <div class="pill"><input type="radio" name="tone" id="t_ed" value="Educational"><label for="t_ed">Educational</label></div>
+      <div class="pill"><input type="radio" name="tone" id="t_cv" value="Conversational"><label for="t_cv">Conversational</label></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Brand Voice in Their Own Words</label><textarea class="fi" id="f_voice" rows="3" placeholder="e.g. Approachable and reassuring. We want homeowners to feel safe — like finding a contractor they can trust. No jargon, no overselling. Think a knowledgeable friend who happens to be a contractor."></textarea></div>
+    <div class="fg"><label class="fl">Topics to Avoid</label><textarea class="fi" id="f_avoid_t" rows="3" placeholder="e.g. Competitor brand names, unverifiable 'lowest price' claims, property investment advice, anything outside their service scope"></textarea></div>
+  </div>
+  <div class="fg"><label class="fl">Content Formats Required</label>
+    <div class="pills">
+      <div class="pill"><input type="checkbox" id="cf_bl" value="Blog Articles"><label for="cf_bl">Blog Articles</label></div>
+      <div class="pill"><input type="checkbox" id="cf_ig" value="Instagram Posts"><label for="cf_ig">Instagram Posts</label></div>
+      <div class="pill"><input type="checkbox" id="cf_ba" value="Before/After Showcases"><label for="cf_ba">Before/After Showcases</label></div>
+      <div class="pill"><input type="checkbox" id="cf_vd" value="Video / Reel Scripts"><label for="cf_vd">Video / Reel Scripts</label></div>
+      <div class="pill"><input type="checkbox" id="cf_lp" value="Landing Pages"><label for="cf_lp">Landing Pages</label></div>
+      <div class="pill"><input type="checkbox" id="cf_gd" value="Renovation Guides"><label for="cf_gd">Renovation Guides</label></div>
+    </div>
+  </div>
+</div>
+
+<div class="fsec" data-s="10">
+  <div class="fey">Section 10 — 12</div><h1 class="fh1">Technical &amp; Hosting Setup</h1>
+  <p class="fsub">Technical SEO is the foundation everything sits on. Identifying issues now means fixing them in Week 1 before they undermine the rest of the strategy.</p>
+  <div class="g2">
+    <div class="fg"><label class="fl">Current CMS</label>
+      <div class="pills">
+        <div class="pill"><input type="radio" name="cms" id="cm_wx" value="Wix" onchange="onCMS(this.value)"><label for="cm_wx">Wix</label></div>
+        <div class="pill"><input type="radio" name="cms" id="cm_wp" value="WordPress" onchange="onCMS(this.value)"><label for="cm_wp">WordPress</label></div>
+        <div class="pill"><input type="radio" name="cms" id="cm_sq" value="Squarespace" onchange="onCMS(this.value)"><label for="cm_sq">Squarespace</label></div>
+        <div class="pill"><input type="radio" name="cms" id="cm_cu" value="Custom" onchange="onCMS(this.value)"><label for="cm_cu">Custom</label></div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Hosting</label>
+      <div class="pills">
+        <div class="pill"><input type="radio" name="host" id="h_ld" value="Leadar.Digital managed hosting"><label for="h_ld">Leadar.Digital (recommended)</label></div>
+        <div class="pill"><input type="radio" name="host" id="h_3p" value="Third-party"><label for="h_3p">Third-party</label></div>
+        <div class="pill"><input type="radio" name="host" id="h_cu" value="Keep current"><label for="h_cu">Keep current</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="fg hidden" id="cms-note-grp"><label class="fl" id="cms-note-lbl">Note</label><input class="fi" type="text" id="f_cms_note"></div>
+  <div class="fg"><label class="fl">Known Technical Issues</label><textarea class="fi" id="f_tech" rows="4" placeholder="e.g. Current Wix site has limited SEO control, no schema markup, no GA4, slow mobile load (~6s), no blog capability. Recommend migrating to WordPress on Leadar.Digital managed hosting as part of Month 1."></textarea></div>
+</div>
+
+<div class="fsec" data-s="11">
+  <div class="fey">Section 11 — 12</div><h1 class="fh1">Budget &amp; Commercial</h1>
+  <p class="fsub">The commercial terms that complete the proposal. These inform package scope and the investment section.</p>
+  <div class="g2">
+    <div class="fg"><label class="fl">Monthly Retainer</label><input class="fi" type="text" id="f_fee" placeholder="e.g. SGD 2,150/month"></div>
+    <div class="fg"><label class="fl">One-time Setup / Project Fees</label><input class="fi" type="text" id="f_setup" placeholder="e.g. SGD 5,380 (Website SGD 4,388 + Branding SGD 992)"></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Contract Type</label><div class="pills"><div class="pill"><input type="radio" name="ct" id="ct_6" value="6-Month Pilot"><label for="ct_6">6-Month Pilot</label></div><div class="pill"><input type="radio" name="ct" id="ct_r" value="Monthly Rolling"><label for="ct_r">Monthly Rolling</label></div><div class="pill"><input type="radio" name="ct" id="ct_a" value="Annual"><label for="ct_a">Annual</label></div></div></div>
+    <div class="fg"><label class="fl">Payment Terms</label><div class="pills"><div class="pill"><input type="radio" name="pt" id="pt_15" value="Net 15"><label for="pt_15">Net 15</label></div><div class="pill"><input type="radio" name="pt" id="pt_up" value="Upfront monthly"><label for="pt_up">Upfront monthly</label></div></div></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Invoice Contact</label><input class="fi" type="text" id="f_inv" placeholder="e.g. Jane — jnsdesignbuild.sales@gmail.com"></div>
+    <div class="fg"><label class="fl">Proposal Validity</label><input class="fi" type="text" id="f_valid" value="30 days from issue date"></div>
+  </div>
+</div>
+
+<div class="fsec" data-s="12">
+  <div class="fey">Section 12 — 12</div><h1 class="fh1">Notes &amp; Sign-Off</h1>
+  <p class="fsub">Final notes before generating. Anything the proposal needs to capture that doesn't fit elsewhere.</p>
+  <div class="fg"><label class="fl">Additional Notes</label><textarea class="fi" id="f_notes" rows="5" placeholder="e.g. Client interested in TikTok before/after videos — explore as performance add-on at Month 3 review. JB operations to get separate geo-targeted content cluster from Month 4. Carousell reviews should be migrated to Google Business Profile."></textarea></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Brief Reference</label><input class="fi" type="text" id="f_ref" placeholder="e.g. LD-2026-JNS-001"></div>
+    <div class="fg"><label class="fl">Issue Date</label><input class="fi" type="date" id="f_date"></div>
+  </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Prepared By</label><input class="fi" type="text" id="f_by" value="Khurram Chaudhry" readonly style="background:var(--off);color:var(--muted)"></div>
+    <div class="fg"><label class="fl">Role</label><input class="fi" type="text" id="f_role" value="Head of Agency Operations" readonly style="background:var(--off);color:var(--muted)"></div>
+  </div>
+</div>
+
+</div><!-- /fmain -->
+</div><!-- /fbody -->
+
+<div class="ffoot">
+  <div class="ffoot-info" id="ffoot-info">Step 1 of 12</div>
+  <div class="btn-row">
+    <button class="btn b-sec" id="btn-back" onclick="nav(-1)" style="display:none"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Back</button>
+    <button class="btn b-nav" id="btn-next" onclick="nav(1)">Continue<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+  </div>
+</div>
+</div><!-- /app-form -->
+
+<!-- PROPOSAL APP -->
+<div id="app-proposal" style="display:none">
+<div class="ptbar">
+  <div class="ptbar-l">
+    <div class="ptbar-brand">LEADAR<span>.DIGITAL</span></div>
+    <div class="ptbar-badge">PROPOSAL READY</div>
+  </div>
+  <div style="display:flex;gap:9px;align-items:center">
+    <button class="btn b-sec" onclick="backToForm()">← Edit Brief</button>
+    <button class="btn b-gen" id="send-to-ops-btn" onclick="sendDirectToOps()" style="background:var(--gold);color:var(--navy)">
+      <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Push to Ops Dashboard
+    </button>
+    <button class="btn b-gen" onclick="window.print()"><svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print / PDF</button>
+  </div>
+</div>
+<div class="pdoc" id="pdoc"></div>
+</div>
+
+</div><!-- /pg-wrap -->
+
+
+<!-- ════════════ OPS DASHBOARD WRAP ════════════ -->
+<div id="ops-wrap" style="display:none">
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('dashboard')" id="tab-dashboard">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="tab" onclick="switchTab('campaigns')" id="tab-campaigns">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Campaigns
+    <span class="tab-badge" id="tab-campaigns-badge">0</span>
+  </div>
+  <div class="tab" onclick="switchTab('capacity')" id="tab-capacity">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    Capacity
+    <span class="tab-badge warn" id="tab-capacity-warn" style="display:none">!</span>
+  </div>
+  <div class="tab" onclick="switchTab('timeline')" id="tab-timeline">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Timeline
+  </div>
+  <div class="tab" onclick="switchTab('team')" id="tab-team">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    Team
+  </div>
+</div>
+
+<!-- ════════════ DASHBOARD ════════════ -->
+<div class="view active" id="view-dashboard">
+  <div id="dashboard-content"></div>
+</div>
+
+<!-- ════════════ CAMPAIGNS ════════════ -->
+<div class="view" id="view-campaigns">
+  <div class="sh">
+    <div class="sh-l">
+      <div>
+        <div class="sh-tag">Active Work</div>
+        <div class="sh-title">Campaign Plans</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('campaign')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Campaign
+    </button>
+  </div>
+  <div id="campaigns-list"></div>
+</div>
+
+<!-- ════════════ CAPACITY ════════════ -->
+<div class="view" id="view-capacity">
+  <div class="sh">
+    <div class="sh-l">
+      <div>
+        <div class="sh-tag">Resource Health</div>
+        <div class="sh-title">Capacity &amp; Workload</div>
+      </div>
+    </div>
+  </div>
+  <div id="capacity-content"></div>
+</div>
+
+<!-- ════════════ TIMELINE ════════════ -->
+<div class="view" id="view-timeline">
+  <div class="sh">
+    <div class="sh-l">
+      <div>
+        <div class="sh-tag">Delivery Plan</div>
+        <div class="sh-title">Master Timeline</div>
+      </div>
+    </div>
+  </div>
+  <div id="timeline-content"></div>
+</div>
+
+<!-- ════════════ TEAM ════════════ -->
+<div class="view" id="view-team">
+  <div class="sh">
+    <div class="sh-l">
+      <div>
+        <div class="sh-tag">Your People</div>
+        <div class="sh-title">Team &amp; Freelancers</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('team')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Person
+    </button>
+  </div>
+  <div id="team-list"></div>
+</div>
+
+<!-- ════════════ CAMPAIGN MODAL ════════════ -->
+<div class="modal-backdrop" id="modal-campaign">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="campaign-modal-title">New Campaign</div>
+      <button class="modal-close" onclick="closeModal('campaign')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="import-panel">
+        <div class="import-panel-title">⚡ Push from Proposal Generator</div>
+        <p>Create a proposal in the <strong style="color:#fff">Proposal Generator</strong> tab, then click <strong style="color:var(--teal)">Push to Ops Dashboard</strong> — it auto-fills a campaign here instantly with the correct package, deliverables and fee. No file downloads needed.</p>
+        <button onclick="switchAppView('proposal'); closeModal('campaign');" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;background:var(--teal);color:var(--navy);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Go to Proposal Generator
+        </button>
+        <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px;font-size:12px;color:rgba(255,255,255,.4)">
+          Or fill in the form below manually
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="fg"><label class="fl">Client / Campaign Name <span class="r">*</span></label><input class="fi" type="text" id="c_name" placeholder="e.g. JNS Design & Build"></div>
+        <div class="fg"><label class="fl">Industry</label><input class="fi" type="text" id="c_industry" placeholder="e.g. Interior Design & Renovation"></div>
+      </div>
+      <div class="g2">
+        <div class="fg">
+          <label class="fl">Package</label>
+          <select class="fi" id="c_pkg" onchange="updatePackageDefaults()">
+            <option value="Startup">Startup — Digital foundation &amp; content marketing</option>
+            <option value="Accelerated" selected>Accelerated — Startup + email &amp; telemarketing</option>
+            <option value="Growth">Growth — Full-scale + ORM, PR &amp; AI tools</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Start Date <span class="r">*</span></label><input class="fi" type="date" id="c_start"></div>
+      </div>
+      <div class="g2">
+        <div class="fg"><label class="fl">Monthly Retainer</label><input class="fi" type="text" id="c_fee" placeholder="e.g. SGD 2,150/month"></div>
+        <div class="fg"><label class="fl">Contract Length</label>
+          <select class="fi" id="c_duration">
+            <option value="3">3 months</option>
+            <option value="6" selected>6 months</option>
+            <option value="12">12 months</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">📋 Deliverables &amp; Hours per Month</div>
+      <div class="fhint">Estimate how many hours each deliverable takes per month. These drive the capacity calculations.</div>
+
+      <div id="deliverables-list"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addDeliverable()" style="margin-top:6px">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Deliverable
+      </button>
+
+      <div class="divider"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">👤 Role Assignments</div>
+      <div id="assignment-list"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('campaign')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCampaign()">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Campaign
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ TEAM MODAL ════════════ -->
+<div class="modal-backdrop" id="modal-team">
+  <div class="modal" style="width:480px">
+    <div class="modal-head">
+      <div class="modal-title" id="team-modal-title">Add Team Member</div>
+      <button class="modal-close" onclick="closeModal('team')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="g2">
+        <div class="fg"><label class="fl">Name <span class="r">*</span></label><input class="fi" type="text" id="t_name" placeholder="e.g. Khurram Chaudhry"></div>
+        <div class="fg"><label class="fl">Role <span class="r">*</span></label><input class="fi" type="text" id="t_role" placeholder="e.g. SEO Strategist"></div>
+      </div>
+      <div class="g2">
+        <div class="fg">
+          <label class="fl">Type</label>
+          <select class="fi" id="t_type">
+            <option value="in-house">In-house</option>
+            <option value="freelancer">Freelancer</option>
+            <option value="owner">Owner / You</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Available hrs/month</label>
+          <input class="fi" type="number" id="t_hours" placeholder="e.g. 80" min="1" max="200">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Specialisations</label>
+        <div class="fhint">What roles can this person be assigned to? Check all that apply.</div>
+        <div id="specialisation-pills" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:6px"></div>
+      </div>
+      <div class="fg"><label class="fl">Daily Rate / Monthly Cost (optional)</label><input class="fi" type="text" id="t_cost" placeholder="e.g. SGD 350/day or SGD 3,000/month"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('team')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTeamMember()">Save Person</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /ops-wrap -->
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// APP-LEVEL STATE & NAVIGATION
+// ══════════════════════════════════════════════════════════════
+let appView = 'proposal';
+
+function switchAppView(view) {
+  appView = view;
+  document.getElementById('pg-wrap').style.display = view === 'proposal' ? 'block' : 'none';
+  document.getElementById('ops-wrap').style.display = view === 'ops' ? 'block' : 'none';
+  document.getElementById('mode-proposal').classList.toggle('active', view === 'proposal');
+  document.getElementById('mode-ops').classList.toggle('active', view === 'ops');
+  document.getElementById('ops-topbar-actions').style.display = view === 'ops' ? 'flex' : 'none';
+  document.getElementById('pg-topbar-actions').style.display = view === 'proposal' ? 'flex' : 'none';
+  if (view === 'ops') { renderAll(); }
+}
+
+function updateOpsBadge() {
+  const badge = document.getElementById('ops-campaign-badge');
+  const count = state.campaigns.length;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'inline' : 'none';
+}
+
+function showToast(msg, duration = 3500) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+// ══════════════════════════════════════════════════════════════
+// SHARED UTILITIES
+// ══════════════════════════════════════════════════════════════
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function sv(id, v) { const e = document.getElementById(id); if (e) e.value = v; }
+function sv2(id, v) { const e = document.getElementById(id); if (e) e.value = v; }
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-SG', { day: '2-digit', month: 'short', year: 'numeric' }); } catch (e) { return d; }
+}
+function fmtDateLong(d) {
+  try { return new Date(d).toLocaleDateString('en-SG', { day: '2-digit', month: 'long', year: 'numeric' }); } catch (e) { return d; }
+}
+function today() { return new Date().toLocaleDateString('en-SG', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+function initials(name) { return name.split(' ').slice(0, 2).map(n => n[0]?.toUpperCase() || '').join(''); }
+
+// ══ FORM LOGIC ══════════════════════════════════════════
+let cur=1;const TOTAL=12;const done=new Set();
+const SECS=[
+  {n:1,l:"Client Overview"},{n:2,l:"Products & Services"},{n:3,l:"Target Audience"},
+  {n:4,l:"Competitors"},{n:5,l:"Digital Presence"},{n:6,l:"SEO Keywords"},
+  {n:7,l:"GEO & AI Search"},{n:8,l:"Campaign Goals"},{n:9,l:"Content & Voice"},
+  {n:10,l:"Technical Setup"},{n:11,l:"Budget"},{n:12,l:"Notes & Sign-Off"}
+];
+const KPIS=["Monthly Enquiries / Leads","Organic Traffic (visits/mo)","Keywords in Top 10","AI Visibility Score (Otterly)","Domain Authority","Content Pieces Published","Social Followers (Instagram)"];
+
+// Init called from unified DOMContentLoaded below
+function initProposalForm(){
+  buildSidebar();buildCompRows();buildPromptRows();buildKPIRows();
+  const t=new Date().toISOString().split('T')[0];
+  sv('f_date',t);sv('f_start',t);
+  updateUI();
+  if(new URLSearchParams(window.location.search).get('sample')==='jns') loadJNS();
+}
+
+function buildSidebar(){
+  document.getElementById('fside').innerHTML=SECS.map(s=>
+    `<div class="sni" id="sn${s.n}" onclick="goTo(${s.n})"><div class="sni-dot"><span>${String(s.n).padStart(2,'0')}</span></div><div class="sni-lbl">${s.l}</div></div>`
+  ).join('');
+}
+function buildCompRows(){
+  document.getElementById('comp-rows').innerHTML=Array.from({length:5},(_,i)=>
+    `<div class="comp-row"><input class="fi" type="text" id="cn${i+1}" placeholder="Competitor ${i+1}"><input class="fi" type="url" id="cu${i+1}" placeholder="https://..."><input class="fi" type="text" id="cs${i+1}" placeholder="Strengths..."><input class="fi" type="text" id="cw${i+1}" placeholder="Weaknesses..."></div>`
+  ).join('');
+}
+function buildPromptRows(){
+  document.getElementById('prompt-rows').innerHTML=Array.from({length:15},(_,i)=>
+    `<div class="pr-row"><div class="prnum">${i+1}</div><input class="fi" type="text" id="pr${i+1}" placeholder="e.g. How do I find a reliable interior designer for my HDB Singapore?"></div>`
+  ).join('');
+}
+function buildKPIRows(){
+  document.getElementById('kpi-rows').innerHTML=KPIS.map((k,i)=>
+    `<div class="kpi-row"><div class="kpi-m">${k}</div><input class="fi" type="text" id="kb${i}" placeholder="Current"><input class="fi" type="text" id="kt${i}" placeholder="Month 6 target"></div>`
+  ).join('');
+}
+
+function nav(dir){done.add(cur);const n=cur+dir;if(n<1||n>TOTAL)return;goTo(n);}
+function goTo(n){
+  document.querySelector(`.fsec[data-s="${cur}"]`)?.classList.remove('active');
+  document.querySelector(`.fsec[data-s="${n}"]`)?.classList.add('active');
+  cur=n;done.add(n);updateUI();
+  document.getElementById('fmain')?.scrollTo({top:0,behavior:'smooth'});
+}
+function updateUI(){
+  document.getElementById('ffoot-info').textContent=`Step ${cur} of ${TOTAL}`;
+  const pct=Math.round(done.size/TOTAL*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('btn-back').style.display=cur>1?'flex':'none';
+  const nb=document.getElementById('btn-next');
+  if(cur===TOTAL){nb.innerHTML='Generate Proposal <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';nb.className='btn b-gen';nb.onclick=generateProposal;}
+  else{nb.innerHTML='Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="9 18 15 12 9 6"/></svg>';nb.className='btn b-nav';nb.onclick=()=>nav(1);}
+  SECS.forEach(s=>{
+    const el=document.getElementById(`sn${s.n}`);if(!el)return;
+    el.className='sni'+(s.n===cur?' active':done.has(s.n)&&s.n!==cur?' done':'');
+  });
+}
+
+function radio(n){const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:'';}
+function setR(n,v){const e=document.querySelector(`input[name="${n}"][value="${v}"]`);if(e){e.checked=true;if(e.onchange)e.onchange.call(e);}}
+function chk(ids){return ids.filter(id=>document.getElementById(id)?.checked).map(id=>document.getElementById(id).value);}
+function setC(id){const e=document.getElementById(id);if(e)e.checked=true;}
+
+function onInd(v){
+  const pm={
+    "Interior Design & Renovation":["How do I find a reliable interior designer for my HDB in Singapore?","What is a good renovation budget for a 4-room HDB in Singapore?","Who are the best interior design companies in Singapore for BTO flats?","Can I hire one contractor for both renovation and aircon in Singapore?","What questions should I ask an ID firm before signing?","How do I avoid renovation scams in Singapore?","What is included in a one-stop renovation package in Singapore?","Which ID firms in Singapore offer transparent package pricing?","How long does a full HDB renovation take in Singapore?","What are the HDB renovation rules I need to know before starting?","Best renovation companies in Singapore with aircon services","Is it better to use a package or itemise renovation costs in Singapore?","How often should I service my aircon in Singapore?","What should a renovation contract include to protect me as a homeowner?","Which aircon brand is best for Singapore HDB flats 2026?"],
+    "Recruitment & HR":["How do I find the best executive search firm in Singapore?","What should I look for when choosing a recruitment agency in Singapore?","How much do recruitment agencies charge in Singapore?","Which Singapore agencies specialise in financial services hiring?","What is the difference between a headhunter and a recruiter?","How long does executive search take in Singapore?","What is an Employer of Record and do I need one?","Should I use a recruitment agency or hire directly in Singapore?","Which recruitment agencies in Singapore have the best C-suite track record?","How do I find a MOM-accredited employment agency in Singapore?","Best IT recruitment agencies Singapore 2026","What makes a good recruitment agency in Singapore?","How do I reduce time-to-hire in Singapore?","What HR outsourcing options are available in Singapore?","How do Singapore companies find senior talent quickly?"]
+  };
+  const ps=pm[v];
+  if(ps)ps.forEach((p,i)=>{const el=document.getElementById(`pr${i+1}`);if(el&&!el.value)el.placeholder=p;});
+}
+function onPkg(v){}
+function onCMS(v){
+  const g=document.getElementById('cms-note-grp');
+  const l=document.getElementById('cms-note-lbl');
+  const i=document.getElementById('f_cms_note');
+  if(v==='Wix'){g.classList.remove('hidden');l.textContent='Wix Note';i.value='Wix has significant SEO limitations. We recommend migrating to WordPress on Leadar.Digital managed hosting.';}
+  else if(v==='WordPress'){g.classList.remove('hidden');l.textContent='Theme / Page Builder';i.value='';i.placeholder='e.g. Elementor, Divi, Avada';}
+  else{g.classList.add('hidden');}
+}
+function confirmLoadSample(){
+  if(confirm('Load JNS Design & Build sample data? This will overwrite any current entries.')) loadJNS();
+}
+function confirmClear(){
+  if(confirm('Clear all form data and start fresh?')) clearForm();
+}
+
+function backToForm(){
+  document.getElementById('app-proposal').style.display='none';
+  document.getElementById('app-form').style.display='block';
+  const active = document.querySelector('.fsec.active');
+  if(active) active.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function clearForm(){
+  // Clear all text inputs, textareas, selects
+  document.querySelectorAll('.fi').forEach(el=>{
+    if(el.tagName==='SELECT') el.selectedIndex=0;
+    else el.value='';
+  });
+  // Uncheck all checkboxes and radios
+  document.querySelectorAll('input[type="checkbox"],input[type="radio"]').forEach(el=>el.checked=false);
+  // Reset to step 1
+  done.clear(); cur=1;
+  SECS.forEach(s=>{const el=document.querySelector(`.fsec[data-s="${s.n}"]`);if(el)el.classList.remove('active');});
+  document.querySelector('.fsec[data-s="1"]')?.classList.add('active');
+  // Reset date fields to today
+  const t=new Date().toISOString().split('T')[0];
+  sv('f_date',t);sv('f_start',t);
+  updateUI();
+}
+
+function readData(){
+  return{
+    co:gv('f_co')||'[Client Company]',web:gv('f_web'),
+    ind:radio('ind')||'Interior Design & Renovation',
+    niche:gv('f_niche'),age:gv('f_age'),contact:gv('f_contact'),email:gv('f_email'),
+    geo:radio('geo')||'Singapore + Johor Bahru',
+    svcs:gv('f_svcs'),diff:gv('f_diff'),certs:gv('f_certs'),
+    price:radio('pp')||'Mid-market',deal:gv('f_deal'),clients:gv('f_clients'),
+    audience:gv('f_audience'),pain:gv('f_pain'),triggers:gv('f_triggers'),objections:gv('f_objections'),
+    comps:Array.from({length:5},(_,i)=>({name:gv(`cn${i+1}`),url:gv(`cu${i+1}`),s:gv(`cs${i+1}`),w:gv(`cw${i+1}`)})).filter(c=>c.name),
+    traffic:gv('f_traffic'),da:gv('f_da'),rankings:gv('f_rankings'),prev:gv('f_prev'),pr:gv('f_pr'),
+    platforms:chk(['sp_fb','sp_ig','sp_tk','sp_ca','sp_yt','sp_gb']),
+    mkw:gv('f_mkw'),ikw:gv('f_ikw'),lkw:gv('f_lkw'),avoid:gv('f_avoid'),
+    aidesc:gv('f_aidesc'),
+    prompts:Array.from({length:15},(_,i)=>gv(`pr${i+1}`)).filter(Boolean),
+    pkg:radio('pkg')||'Accelerated',start:gv('f_start'),
+    tone:radio('tone')||'Warm & Trustworthy',voice:gv('f_voice'),avoid_t:gv('f_avoid_t'),
+    formats:chk(['cf_bl','cf_ig','cf_ba','cf_vd','cf_lp','cf_gd']),
+    cms:radio('cms')||'Wix',hosting:radio('host')||'Leadar.Digital managed hosting',tech:gv('f_tech'),
+    fee:gv('f_fee')||'SGD [X]/month',setup:gv('f_setup')||'SGD [X] one-time',
+    contract:radio('ct')||'6-Month Pilot',payment:radio('pt')||'Net 15',
+    inv:gv('f_inv'),valid:gv('f_valid')||'30 days from issue date',
+    notes:gv('f_notes'),ref:gv('f_ref')||'LD-2026-001',date:gv('f_date')||new Date().toLocaleDateString('en-SG',{day:'2-digit',month:'long',year:'numeric'}),
+    by:gv('f_by')||'Khurram Chaudhry',role:gv('f_role')||'Head of Agency Operations',
+    kpi:Array.from({length:7},(_,i)=>({b:gv(`kb${i}`),t:gv(`kt${i}`)})),
+  };
+}
+
+// fmtDate with long month names for proposal output
+function fmtDateProposal(d){try{return new Date(d).toLocaleDateString('en-SG',{day:'2-digit',month:'long',year:'numeric'});}catch(e){return d;}}
+
+function generateProposal(){
+  // Basic validation on required fields
+  const co = gv('f_co');
+  const ind = radio('ind');
+  if(!co || !ind){
+    alert('Please fill in at least Company Name (Section 1) and select an Industry before generating.');
+    if(!co){goTo(1); document.getElementById('f_co').focus();}
+    return;
+  }
+  const d=readData();
+  document.getElementById('app-form').style.display='none';
+  document.getElementById('app-proposal').style.display='block';
+  document.getElementById('pdoc').innerHTML=buildHTML(d);
+  window.scrollTo(0,0);
+}
+
+function buildHTML(d){
+  const pkgLeads={Startup:"steady early-stage",Accelerated:"accelerated pipeline growth",Growth:"full-scale market dominance"};
+  const pkgArt={Startup:"2–4",Accelerated:"4–8",Growth:"8–12"};
+  const isID=d.ind==='Interior Design & Renovation';
+
+  const introTxt=isID
+    ?`Singapore's renovation market is fiercely competitive — aggregator platforms like Qanvast and Livspace dominate the top search results and funnel homeowner enquiries through their own referral networks. ${d.co} has a genuine structural advantage: the rare combination of interior design expertise and in-house airconditioning under one roof, operating across both Singapore and Johor Bahru. This proposal outlines how we make that advantage the first thing a homeowner finds when they search — and the first thing an AI assistant cites when they ask.`
+    :`This proposal outlines a dual-track digital growth strategy for ${d.co}: traditional SEO to capture Google search demand, and GEO — Generative Engine Optimization — to ensure the brand is cited when prospects ask AI assistants about your industry. Both tracks reinforce each other. The result is compounding visibility across every channel where buyers research and decide.`;
+
+  const geoTxt=isID
+    ?`Homeowners in Singapore increasingly start their renovation journey by asking ChatGPT or Perplexity questions like <em>"How do I find a reliable interior designer for my HDB?"</em>. If ${d.co} isn't in those answers, they don't exist to that homeowner at the most critical moment of their search. GEO closes that gap — and no competitor in your niche has started yet.`
+    :`When prospects ask AI assistants about ${d.ind.toLowerCase()} in Singapore, ${d.co} needs to be the brand that appears. GEO ensures that happens — systematically and measurably.`;
+
+  const compRows=d.comps.length
+    ?d.comps.map((c,i)=>`<tr><td>${c.name}</td><td>${c.url||'—'}</td><td>${c.s||'—'}</td><td>${c.w||'—'}</td></tr>`).join('')
+    :isID
+      ?`<tr><td>Qanvast</td><td>qanvast.com</td><td>Massive organic traffic, aggregator trust</td><td>Takes commission, commoditises ID firms</td></tr><tr><td>Livspace</td><td>livspace.com</td><td>Strong brand, funding, tech-forward</td><td>Less personal, higher cost, no aircon</td></tr><tr><td>Rezt &amp; Relax</td><td>reztnrelax.com</td><td>High volume, marketing-savvy</td><td>Many post-renovation complaints, generic</td></tr><tr><td>Space Atelier</td><td>spaceatelier.com.sg</td><td>Established brand, strong portfolio</td><td>No aircon service, SG-only</td></tr><tr><td>Local ID firms</td><td>—</td><td>Price-competitive</td><td>No aircon differentiation, no digital presence</td></tr>`
+      :`<tr><td colspan="4" style="color:var(--muted);text-align:center">No competitors entered — will be added after Semrush analysis</td></tr>`;
+
+  const jnsPrompts=["How do I find a reliable interior designer for my HDB in Singapore?","What is a good renovation budget for a 4-room HDB in Singapore?","Who are the best interior design companies in Singapore for BTO flats?","Can I hire one contractor for both renovation and aircon in Singapore?","What questions should I ask an ID firm before signing?","How do I avoid renovation scams in Singapore?","What is included in a one-stop renovation package in Singapore?","Which ID firms in Singapore offer transparent package pricing?","How long does a full HDB renovation take in Singapore?","What are the HDB renovation rules I need to know?","Best renovation companies in Singapore that also handle aircon","Is a renovation package or itemised quote cheaper in Singapore?","How often should I service my aircon in Singapore?","What should a renovation contract include to protect me?","Which aircon brand is best for Singapore HDB flats 2026?"];
+  const promptArr=d.prompts.length>=5?d.prompts:jnsPrompts;
+  const promptRows=promptArr.map((p,i)=>`<tr><td class="ptn">${i+1}</td><td>${p}</td></tr>`).join('');
+
+  const kpiRows=KPIS.map((k,i)=>`<tr><td>${k}</td><td>${d.kpi[i]?.b||'—'}</td><td><strong>${d.kpi[i]?.t||'TBC'}</strong></td></tr>`).join('');
+
+  return `
+<div class="pcover">
+  <div class="cg1"></div><div class="cg2"></div>
+  <div class="ctop">
+    <div><div class="c-logo">LEADAR<span>.DIGITAL</span></div><div class="c-tag">B2B &amp; B2C Digital Marketing Specialists</div></div>
+    <div class="c-ref"><div>Ref: ${d.ref}</div><div>Date: ${fmtDateProposal(d.date)}</div><div>Valid: ${d.valid}</div></div>
+  </div>
+  <div class="ccenter">
+    <div class="c-eye">Digital Marketing Proposal</div>
+    <div class="c-h1">Built for<br><em>${d.co}</em></div>
+    <div class="c-div"></div>
+    <div class="c-sub">SEO · GEO — AI Search Optimisation · Content Marketing · Lead Generation<br>A dual-track strategy for 2026 and beyond.</div>
+    <div class="c-meta">
+      <div class="c-mi"><div class="lbl">Prepared for</div><div class="val t">${d.co}</div></div>
+      <div class="c-mi"><div class="lbl">Industry</div><div class="val">${d.ind}</div></div>
+      <div class="c-mi"><div class="lbl">Package</div><div class="val">${d.pkg}</div></div>
+      <div class="c-mi"><div class="lbl">Geography</div><div class="val">${d.geo}</div></div>
+    </div>
+  </div>
+  <div class="cbot">
+    <div class="cbot-l"><strong>${d.by}</strong>${d.role} — Leadar.Digital &nbsp;|&nbsp; hello@leadar.digital &nbsp;|&nbsp; leadar.digital</div>
+    <div class="cbot-r">Confidential</div>
+  </div>
+</div>
+
+<div class="p-content">
+<div class="phdr"><div class="phdr-l">LEADAR<span>.DIGITAL</span></div><div class="phdr-r">Proposal for ${d.co} &nbsp;|&nbsp; ${d.ref}</div></div>
+
+<div class="ps">
+  <div class="p-bar"><div class="p-num">01</div><div class="p-ttl">Executive Summary</div></div>
+  <div class="pbody">${introTxt}</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n t">${d.traffic||'—'}</div><div class="stat-l">Current Monthly Traffic</div></div>
+    <div class="stat"><div class="stat-n">${d.da||'—'}</div><div class="stat-l">Domain Authority</div></div>
+    <div class="stat"><div class="stat-n">${d.rankings||'0'}</div><div class="stat-l">Top 10 Rankings</div></div>
+    <div class="stat hi"><div class="stat-n g">0%</div><div class="stat-l">AI Search Visibility — first-mover opportunity</div></div>
+  </div>
+  <div class="abox"><div class="abox-i">🎯</div><div class="abox-b"><strong>The core opportunity:</strong> ${d.co} operates in a market where AI-generated answers are increasingly where research starts. Our dual-track strategy — traditional SEO for Google, GEO for AI citation — means ${d.co} gets found wherever the customer begins, whether that's Google or ChatGPT.</div></div>
+</div>
+
+<div class="ps">
+  <div class="p-bar"><div class="p-num">02</div><div class="p-ttl">Understanding Your Business</div></div>
+  <div class="twocol">
+    <div>
+      <div class="card tc"><div class="card-t">The Company</div><div class="card-b">${d.co}${d.niche?' — '+d.niche:''}.${d.web?' Website: <strong>'+d.web+'</strong>. ':''}${d.age?'Established for '+d.age+'. ':''}Geographic focus: <strong>${d.geo}</strong>.</div></div>
+      <br>
+      <div class="card"><div class="card-t">Services Offered</div><div class="card-b" style="white-space:pre-line">${d.svcs||'Interior design, renovation, airconditioning services'}</div></div>
+    </div>
+    <div>
+      <div class="card"><div class="card-t">Target Clients</div><div class="card-b">${d.audience||'HDB owners, condo residents, and landed property owners seeking renovation and aircon services across Singapore and Johor Bahru.'}</div></div>
+      <br>
+      <div class="card gc"><div class="card-t">Key Differentiators</div><div class="card-b">${d.diff||'One-stop interior design and aircon services under one roof. Operations in Singapore and Johor Bahru.'}</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="ps bb">
+  <div class="p-bar"><div class="p-num">03</div><div class="p-ttl">Market Assessment &amp; Opportunity</div></div>
+  <div class="pbody">Based on our initial Semrush analysis and Otterly.ai GEO baseline audit, here is where ${d.co} stands today and where the opportunity lies.</div>
+  <div class="twocol">
+    <div class="card nc"><div class="card-t">Current State</div><div class="card-b">Monthly traffic: <strong>${d.traffic||'Early stage'}</strong><br>Domain Authority: <strong>${d.da||'To be assessed'}</strong><br>Top 10 rankings: <strong>${d.rankings||'None significant'}</strong><br>AI visibility: <strong>0% — not yet tracked</strong><br>${d.prev||'No formal digital marketing to date. Relies on referrals and Carousell listings.'}</div></div>
+    <div class="card grc"><div class="card-t">The Opportunity</div><div class="card-b">${isID?'✓ Renovation searches in Singapore generate thousands of high-intent monthly queries<br>✓ AI search visibility in this niche is near-zero for local ID firms — first-mover advantage available<br>✓ Aircon + ID combination is uniquely searchable and unclaimed in AI answers<br>✓ JB operations opens a second geo-targeted keyword universe':'✓ High-intent keyword gaps identified vs competitors<br>✓ AI search visibility near-zero in this niche — first-mover advantage<br>✓ Significant uncaptured content and search demand identified'}</div></div>
+  </div>
+  <div class="pbody" style="margin-top:18px"><strong>Competitor Landscape</strong></div>
+  <table class="ptbl"><thead><tr><th>Competitor</th><th>URL</th><th>Strengths</th><th>Weaknesses</th></tr></thead><tbody>${compRows}</tbody></table>
+</div>
+
+<div class="ps">
+  <div class="p-bar"><div class="p-num">04</div><div class="p-ttl">Our Strategy — SEO + GEO Dual-Track</div></div>
+  <div class="pbody">Two tracks run simultaneously and reinforce each other. Stronger SEO authority leads to more AI citations. Higher AI citation frequency reinforces search engine trust. Most agencies only run Track 1. We run both — and measure both every month.</div>
+  <div class="dual">
+    <div class="tr tr-seo">
+      <div class="tr-eye">Track 1 — SEO</div>
+      <div class="tr-h">Traditional Search Dominance</div>
+      ${["Technical SEO audit & ongoing monitoring","Full keyword gap analysis vs competitors","Topic cluster & content architecture","On-page optimisation via Surfer SEO","Schema markup — LocalBusiness, FAQ, Article","Monthly SEO-optimised content publication","Backlink acquisition & digital PR","Google Business Profile optimisation"].map(t=>`<div class="tr-i"><span class="tr-ic">✓</span>${t}</div>`).join('')}
+    </div>
+    <div class="tr-div"></div>
+    <div class="tr tr-geo">
+      <div class="tr-eye">Track 2 — GEO</div>
+      <div class="tr-h">AI Search Citation Dominance</div>
+      ${["15 prompts monitored weekly in Otterly.ai","Weekly citation report — ChatGPT, Perplexity, Gemini","Answer-optimised content per tracked prompt","Brand mention & PR citation building","E-E-A-T authority signals — real experts, real citations","Monthly GEO report with competitive benchmark","Quarterly prompt expansion as AI evolves","First-mover advantage in your niche"].map(t=>`<div class="tr-i"><span class="tr-ic">✓</span>${t}</div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<div class="ps ab">
+  <div class="p-bar"><div class="p-num">05</div><div class="p-ttl">Scope of Work &amp; Deliverables</div></div>
+  <div class="di"><div class="di-icon">🔧</div><div><div class="di-t">Technical SEO Audit &amp; Website Foundation</div><div class="di-d">Full Semrush site audit in Week 1. All critical issues resolved within 30 days.${d.cms==='Wix'?' We recommend migrating from Wix to WordPress on Leadar.Digital managed hosting — Wix caps SEO capability.':''}</div>${["Complete technical audit report with prioritised fix list","GA4 and Google Search Console setup &amp; verification","Schema markup — LocalBusiness, Service, FAQ, Review","Core Web Vitals assessment and mobile optimisation","Sitemap and robots.txt configuration",d.hosting==='Leadar.Digital managed hosting'?"Migration to Leadar.Digital managed WordPress hosting (included)":""].filter(Boolean).map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
+  <div class="di"><div class="di-icon">📊</div><div><div class="di-t">Keyword Research &amp; Content Architecture</div><div class="di-d">Semrush Keyword Gap and Surfer SEO used to map the complete opportunity — commercial, informational, and local intent.</div>${["Full keyword universe mapped and prioritised by commercial value","Competitor gap analysis — what they rank for that "+d.co+" doesn't yet","Topic cluster map — pillar pages and supporting content mapped","Quarterly content calendar with Surfer briefs for execution"].map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
+  <div class="di"><div class="di-icon">✍️</div><div><div class="di-t">Monthly Content Production — ${pkgArt[d.pkg]||'4–8'} pieces/month</div><div class="di-d">Every piece written to rank on Google AND be cited by AI. Surfer SEO optimised to 80+ before publish. Written to ${d.tone||'your brand voice'}.</div>${[pkgArt[d.pkg]+" SEO + GEO optimised articles per month","Surfer SEO score 80+ on every piece before publishing","Meta titles, descriptions and schema-ready headings included","Internal linking architecture built into every article",isID?"Before/after project showcases formatted for AI citation and Google image search":""].filter(Boolean).map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
+  <div class="di"><div class="di-icon">🤖</div><div><div class="di-t">GEO — AI Search Visibility Programme</div><div class="di-d">The service no other agency in Singapore is delivering at this level. We track and build ${d.co}'s presence inside AI-generated answers — systematically and measurably.</div>${["15 AI prompts monitored weekly in Otterly.ai from Day 1","Weekly citation report — are you appearing in ChatGPT, Perplexity, Gemini?","Answer-optimised content targeting your highest-priority AI prompts","Digital PR to build citations on authoritative sites AI engines trust","Monthly GEO report with competitive benchmark vs top 3 competitors"].map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
+  <div class="di"><div class="di-icon">📈</div><div><div class="di-t">Reporting &amp; Direct Communication</div><div class="di-d">No junior account managers. Direct access to Khurram throughout the engagement.</div>${["Monthly SEO report — rankings, traffic, backlinks (Semrush data)","Monthly GEO report — AI citation frequency and share of voice (Otterly.ai data)","Monthly review call — strategy refined based on live data","Quarterly strategy review and next-90-days roadmap"].map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
+</div>
+
+<div class="ps bb">
+  <div class="p-bar"><div class="p-num">06</div><div class="p-ttl">GEO — AI Search Strategy</div></div>
+  <div class="abox"><div class="abox-i">💡</div><div class="abox-b">${geoTxt}</div></div>
+  ${d.aidesc?`<div class="card tc" style="margin:14px 0"><div class="card-t">Ideal AI Description of ${d.co}</div><div class="card-b">${d.aidesc}</div></div>`:''}
+  <div class="pbody" style="margin-top:16px"><strong>15 AI Prompts Monitored Weekly in Otterly.ai</strong></div>
+  <div class="pmuted" style="margin-bottom:10px">These are the exact phrases ${d.co}'s ideal customers are typing into ChatGPT, Perplexity, and Gemini right now. From Day 1, we track whether the brand appears in each answer — and systematically build content to earn those citations.</div>
+  <table class="prompt-tbl"><tbody>${promptRows}</tbody></table>
+</div>
+
+<div class="ps">
+  <div class="p-bar"><div class="p-num">07</div><div class="p-ttl">Timeline &amp; Milestones</div></div>
+  <div class="tl">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-p">Weeks 1–2 — Onboarding &amp; Technical Foundation</div><div class="tl-d">Days 1–14</div>${["Brief finalisation, access handover (GSC, GA4, CMS, hosting)","Semrush site audit delivered — full technical report with priority fix list","Otterly.ai GEO monitoring live — all 15 prompts tracking from Day 1","Competitor keyword gap report and baseline AI visibility score established"].map(t=>`<div class="tl-t">${t}</div>`).join('')}</div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-p">Weeks 3–4 — Strategy Locked, Content Begins</div><div class="tl-d">Days 15–30</div>${["Keyword universe mapped and prioritised by commercial value","Content cluster architecture finalised — pillar pages and topic clusters confirmed","Month 1 content calendar approved, Surfer SEO briefs issued","Critical technical fixes implemented — schema markup live across all key pages"].map(t=>`<div class="tl-t">${t}</div>`).join('')}</div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-p">Month 2 — Full Execution</div><div class="tl-d">Days 31–60</div>${["First content pieces published, indexed, and submitted to Search Console","GEO-targeted answer pages live for top 5 AI prompts","Backlink and citation outreach begins","First monthly SEO + GEO performance report delivered"].map(t=>`<div class="tl-t">${t}</div>`).join('')}</div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-p">Month 3 — First Results Review</div><div class="tl-d">Days 61–90</div>${["90-day ranking and AI visibility progress report","Strategy refined based on what's gaining traction fastest","First AI citation wins documented and celebrated"].map(t=>`<div class="tl-t">${t}</div>`).join('')}</div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--gold);box-shadow:0 0 0 2px var(--gold)"></div><div class="tl-p">Months 4–6 — Scale &amp; Compound</div><div class="tl-d">Days 91–180</div>${["Topical authority compounds as the content cluster builds out","AI citation frequency increases as brand authority signals strengthen","Target: "+pkgLeads[d.pkg]+" enquiry pipeline achieved by Month 6","6-month performance review — strategy for next phase agreed"].map(t=>`<div class="tl-t">${t}</div>`).join('')}</div>
+  </div>
+  <div class="dvdr" style="margin-top:20px"><span class="dvdr-lbl">KPI Targets</span></div>
+  <table class="ptbl"><thead><tr><th>KPI Metric</th><th>Current Baseline</th><th>Month 6 Target</th></tr></thead><tbody>${kpiRows}</tbody></table>
+</div>
+
+<div class="ps bb">
+  <div class="p-bar"><div class="p-num">08</div><div class="p-ttl">Investment &amp; Package</div></div>
+  <div class="abox"><div class="abox-i">✅</div><div class="abox-b"><strong>Included in your retainer:</strong> All tool costs, software licences, and platform access are covered. You do not pay separately for the software stack. Paid advertising spend (Google Ads, Meta Ads) is billed directly to your ad account.</div></div>
+  <div class="pbody"><strong>Selected Package: ${d.pkg}</strong>${d.pkg==='Startup'?' — Nominal entry-level pricing for startups and new brands building their digital presence.':d.pkg==='Accelerated'?' — Custom pricing tailored to your business. Includes all Startup services plus email marketing and telemarketing outreach.':' — Enterprise-level investment. Includes everything in Accelerated plus ORM, PR, and proprietary AI tools.'}</div>
+  <table class="ptbl">
+    <thead><tr><th style="width:50%">Service / Deliverable</th><th>Frequency</th><th class="pc">Investment</th></tr></thead>
+    <tbody>
+      <tr><td>Domain Name, Professional Email &amp; Website Setup</td><td>Month 1 only</td><td class="pc">Included</td></tr>
+      <tr><td>Logo Design, Brand Identity &amp; Graphics Package</td><td>Month 1–2</td><td class="pc">Included</td></tr>
+      <tr><td>Content Marketing Strategy &amp; Planning</td><td>Quarterly</td><td class="pc">Included</td></tr>
+      <tr><td>SEO-Optimised Content Production (${pkgArt[d.pkg]} pieces/month)</td><td>Monthly</td><td class="pc">—</td></tr>
+      <tr><td>Social Media Marketing &amp; Management</td><td>Monthly</td><td class="pc">Included</td></tr>
+      ${d.pkg==='Accelerated'||d.pkg==='Growth'?`<tr><td>Email Marketing Campaigns &amp; Automation</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>Telemarketing &amp; Outbound Call Campaigns</td><td>Monthly</td><td class="pc">Included</td></tr>`:''}
+      ${d.pkg==='Growth'?`<tr><td>Online Reputation Management (ORM)</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>Public Relations &amp; Media Outreach</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>AI Marketing Toolsuite &amp; AI Chat Integration</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>Predictive Analytics &amp; AI Insights</td><td>Monthly</td><td class="pc">Included</td></tr>`:''}
+      <tr><td>Monthly Reports + Strategy Call</td><td>Monthly</td><td class="pc">Included</td></tr>
+      ${d.hosting==='Leadar.Digital managed hosting'?'<tr><td>Leadar.Digital Managed WordPress Hosting</td><td>Annual</td><td class="pc">Included</td></tr>':''}
+      <tr class="tr-tot"><td><strong>Monthly Retainer${d.pkg==='Startup'?' (from Month 2)':' — Tailored Pricing'}</strong></td><td>Ongoing</td><td class="pc">${d.pkg==='Startup'?d.fee:'Contact us for your custom quote'}</td></tr>
+      <tr><td>Month 1 Total (includes setup fee)</td><td>First month only</td><td class="pc">${d.setup}</td></tr>
+    </tbody>
+  </table>
+  <div class="pbody" style="margin-top:18px"><strong>Payment Schedule</strong></div>
+  <div class="miles">
+    <div class="mile"><div class="mile-lbl">On Agreement</div><div class="mile-d">Proposal acceptance &amp; deposit</div><div class="mile-p">50%</div><div class="mile-a">Deposit</div></div>
+    <div class="mile"><div class="mile-lbl">Month 1 Complete</div><div class="mile-d">Technical foundation &amp; audit delivered</div><div class="mile-p">20%</div></div>
+    <div class="mile"><div class="mile-lbl">Month 3 Review</div><div class="mile-d">First results review completed</div><div class="mile-p">20%</div></div>
+    <div class="mile"><div class="mile-lbl">Month 6 Sign-Off</div><div class="mile-d">Pilot complete, strategy renewed</div><div class="mile-p">10%</div></div>
+  </div>
+</div>
+
+<div class="ps">
+  <div class="p-bar"><div class="p-num">09</div><div class="p-ttl">Why Leadar.Digital</div></div>
+  <table class="cmp-tbl">
+    <thead><tr><th style="text-align:left">What We're Comparing</th><th>Other Agencies</th><th>Leadar.Digital</th></tr></thead>
+    <tbody>
+      <tr><td>Strategy approach</td><td>Generic templates</td><td>Industry-specific</td></tr>
+      <tr><td>GEO / AI Search</td><td>Not offered</td><td>Core deliverable</td></tr>
+      <tr><td>Tool costs</td><td>Passed to client</td><td>Included in retainer</td></tr>
+      <tr><td>Hosting</td><td>Third-party dependency</td><td>Own infrastructure</td></tr>
+      <tr><td>Success metric</td><td>Traffic &amp; impressions</td><td>Qualified enquiries</td></tr>
+      <tr><td>Contracts</td><td>12-month lock-in</td><td>Month-to-month after 6 months</td></tr>
+      <tr><td>Asset ownership</td><td>Agency retains assets</td><td>You own everything</td></tr>
+      <tr><td>Account management</td><td>Junior managers</td><td>Direct access to Khurram</td></tr>
+    </tbody>
+  </table>
+  <div class="twocol" style="margin-top:16px">
+    <div class="card nc"><div class="card-t">Our Infrastructure Advantage</div><div class="card-b">Leadar.Digital operates its own hosting platform and domain registrar. Your site runs on infrastructure we control — faster deployments, no third-party delays, no hosting costs passed on. Included in your retainer.</div></div>
+    <div class="card"><div class="card-t">Our Commitments</div><div class="card-b">✓ You own all assets — content, accounts, domain, analytics. Walk away with everything.<br><br>✓ Month-to-month after the 6-month pilot. We earn your business every month.<br><br>✓ If it's not working by Month 6, we'll say so honestly.</div></div>
+  </div>
+</div>
+
+<div class="ps bb">
+  <div class="p-bar"><div class="p-num">10</div><div class="p-ttl">Terms, Next Steps &amp; Sign-Off</div></div>
+  <div class="pbody"><strong>How to Get Started</strong></div>
+  <table class="ptbl" style="margin-bottom:20px">
+    <tbody>
+      <tr><td style="width:80px;background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 1</td><td>Sign and return this proposal, or confirm acceptance by email to <strong>hello@leadar.digital</strong></td></tr>
+      <tr><td style="background:var(--navy);color:var(--teal);font-weight:700;text-align:center">STEP 2</td><td>First invoice issued. Onboarding begins within 48 hours of payment.</td></tr>
+      <tr><td style="background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 3</td><td>Share access credentials — Google Search Console, GA4, CMS, existing ad accounts.</td></tr>
+      <tr><td style="background:var(--navy);color:var(--teal);font-weight:700;text-align:center">STEP 4</td><td>Onboarding call with Khurram — finalise priorities, confirm Month 1 action plan.</td></tr>
+      <tr><td style="background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 5</td><td>Technical audit complete and Otterly.ai GEO monitoring live within 7 days.</td></tr>
+    </tbody>
+  </table>
+  <table class="ptbl" style="margin-bottom:20px">
+    <thead><tr><th>Key Term</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Contract</td><td>${d.contract}. Month-to-month thereafter with 30 days written notice.</td></tr>
+      <tr><td>Payment</td><td>${d.payment}. Monthly in advance from Month 2.</td></tr>
+      <tr><td>Asset Ownership</td><td>All content, accounts, and creative assets belong to ${d.co}. You own everything, always.</td></tr>
+      <tr><td>Paid Advertising</td><td>Google Ads / Meta Ads budget billed directly to your ad account. Not included in retainer.</td></tr>
+      <tr><td>Reporting</td><td>Monthly reports delivered by the 10th of each month covering the prior calendar month.</td></tr>
+      <tr><td>Proposal Validity</td><td>${d.valid}.</td></tr>
+    </tbody>
+  </table>
+  ${d.notes?`<div class="card" style="margin-bottom:18px"><div class="card-t">Additional Notes</div><div class="card-b">${d.notes}</div></div>`:''}
+  <div class="sog">
+    <div class="sob nb">
+      <div class="sob-t">Client Acceptance</div>
+      <div class="sf"><span class="sf-lbl">Company:</span><span class="sf-val">${d.co}</span></div>
+      <div class="sf"><span class="sf-lbl">Name:</span><span class="sf-val">${d.contact||''}</span></div>
+      <div class="sf"><span class="sf-lbl">Signed:</span><span class="sf-val"></span></div>
+      <div class="sf"><span class="sf-lbl">Date:</span><span class="sf-val"></span></div>
+    </div>
+    <div class="sob">
+      <div class="sob-t">Prepared By — Leadar.Digital</div>
+      <div class="sf"><span class="sf-lbl">Name:</span><span class="sf-val">${d.by}</span></div>
+      <div class="sf"><span class="sf-lbl">Role:</span><span class="sf-val">${d.role}</span></div>
+      <div class="sf"><span class="sf-lbl">Email:</span><span class="sf-val">hello@leadar.digital</span></div>
+      <div class="sf"><span class="sf-lbl">Date:</span><span class="sf-val">${fmtDateProposal(d.date)}</span></div>
+    </div>
+  </div>
+  <div class="abox" style="margin-top:20px;justify-content:center">
+    <div class="abox-b" style="text-align:center;width:100%">
+      <strong style="font-size:16px;color:#fff">Leadar.Digital</strong><br>
+      <span style="color:var(--teal)">leadar.digital</span> &nbsp;|&nbsp; hello@leadar.digital &nbsp;|&nbsp; ${d.by}, ${d.role}
+    </div>
+  </div>
+</div>
+
+</div>`;
+}
+
+// ══ JNS SAMPLE DATA ════════════════════════════════════
+function loadJNS(){
+  sv('f_co','JNS Design & Build Pte Ltd');sv('f_web','https://www.jnsdesignbuild.com');
+  setR('ind','Interior Design & Renovation');
+  sv('f_niche','One-stop interior design + airconditioning specialist. HDB, condo, landed & commercial. Operations in Singapore and Johor Bahru.');
+  const ageEl=document.getElementById('f_age');if(ageEl)ageEl.value='3–5 years';
+  sv('f_contact','Jane, Director');sv('f_email','jnsdesignbuild.sales@gmail.com');
+  setR('geo','Singapore + Johor Bahru');
+  sv('f_svcs','Interior Design — HDB, condo, landed property, commercial\nFull & partial renovation\nAirconditioning — installation, servicing, chemical wash, repair\nOne-stop renovation + aircon packages\nProject management from concept to handover');
+  sv('f_diff','Rare combination: interior design AND aircon under one roof\nOperations across Singapore and Johor Bahru\nTransparent package pricing — no hidden costs\nEnd-to-end project management by the director\nPersonal service — clients deal directly with decision-makers');
+  sv('f_certs','BCA licensed renovation contractor\nNEA registered aircon contractor\nStrong Carousell review history (verified seller)');
+  setR('pp','Mid-market');
+  sv('f_deal','SGD 15,000–80,000 for full renovation packages; SGD 50–500+ for aircon services');
+  sv('f_clients','HDB BTO clients across 12+ estates, commercial shopfronts in Singapore and JB, landed property renovations');
+  sv('f_audience','HDB owners collecting keys or completing MOP, BTO recipients planning their renovation, condo and landed property upgraders, young families doing their first home renovation, commercial property managers needing aircon servicing contracts');
+  sv('f_pain','Scared of being scammed — horror renovation stories on HDB forums and social media\nOverwhelmed by too many quotes from different contractors\nDon\'t want to coordinate multiple contractors for ID and aircon separately\nWorried about hidden costs and budget overruns mid-project\nNeed trustworthy, reliable aircon servicing — not sure who to call');
+  sv('f_triggers','Key collection date approaching (BTO or resale purchase)\nHDB renovation permit just approved\nAircon completely broken or not cooling\nPreparing home for CNY or family moving in\nFriend just completed a beautiful renovation and inspired them');
+  sv('f_objections','Horror renovation stories seen on HDB forums and social media\nComparing too many quotes and feeling paralysed\nNot sure what\'s included in packages vs what costs extra\nWondering if they can get it cheaper somewhere else\nConcerned about post-renovation support if issues arise');
+  [['Qanvast','https://qanvast.com','Massive traffic, aggregator model, high homeowner trust','Takes commission from IDs, commoditises firms, doesn\'t favour smaller players'],
+   ['Livspace','https://livspace.com','Strong funding, tech-forward, growing brand recognition','Less personal service, more corporate, no aircon specialisation'],
+   ['Rezt & Relax','https://reztnrelax.com','High project volume, strong marketing','Many post-renovation service complaints, generic output'],
+   ['Space Atelier','https://spaceatelier.com.sg','Established brand, strong visual portfolio','No aircon service, Singapore-only, higher price point'],
+   ['Local ID firms on Carousell','https://carousell.com','Price-competitive','No differentiation, minimal digital presence, no aircon']
+  ].forEach(([n,u,s,w],i)=>{sv(`cn${i+1}`,n);sv(`cu${i+1}`,u);sv(`cs${i+1}`,s);sv(`cw${i+1}`,w);});
+  sv('f_traffic','~150–200 visits/month (mostly direct/referral)');sv('f_da','DA 5–8 (early stage)');
+  sv('f_rankings','No significant Google rankings. Found primarily via Carousell and WhatsApp referrals.');
+  sv('f_prev','Basic Wix website. Active Carousell seller with good review history. Facebook page exists but inconsistently updated. No SEO, no GA4, no Search Console. Entirely reliant on word-of-mouth and Carousell organic.');
+  sv('f_pr','Good reviews on Carousell and Google Maps. Mentioned organically in HDB forums. No press coverage to date.');
+  setC('sp_fb');setC('sp_ig');setC('sp_ca');setC('sp_gb');
+  sv('f_mkw','interior design company Singapore\nHDB renovation Singapore\nrenovation contractor Singapore\naircon installation Singapore HDB\none stop renovation Singapore\ninterior designer Singapore BTO\nrenovation company Singapore condo');
+  sv('f_ikw','how much does HDB renovation cost Singapore 2026\nhow to choose interior designer Singapore\nbest aircon brand Singapore HDB\nrenovation timeline BTO Singapore\nhow to avoid renovation scams Singapore\nHDB renovation rules 2026\ncan I do renovation and aircon together');
+  sv('f_lkw','interior design Jalan Kembangan\nrenovation contractor east Singapore\naircon servicing Bedok Tampines\nJohor Bahru renovation interior design\none stop renovation HDB 4 room\ninterior design company Kembangan Eunos');
+  sv('f_avoid','furniture (not their product), real estate investment terms, employment / job search terms, competitor brand names');
+  sv('f_aidesc','JNS Design & Build is a Singapore-based one-stop interior design and renovation studio with a unique specialisation in airconditioning — allowing homeowners to complete their entire renovation including aircon under one trusted contractor. They serve HDB, condo, landed, and commercial properties across Singapore and Johor Bahru, known for transparent pricing and hands-on project management by the director.');
+  const jps=["How do I find a reliable interior designer for my HDB in Singapore?","What is a good renovation budget for a 4-room HDB in Singapore?","Who are the best interior design companies in Singapore for BTO flats?","Can I hire one contractor for both renovation and aircon in Singapore?","What questions should I ask an ID firm before signing a contract?","How do I avoid renovation scams in Singapore?","What is included in a one-stop renovation package in Singapore?","Which ID firms in Singapore offer transparent package pricing?","How long does a full HDB renovation take in Singapore?","What are the HDB renovation rules I need to know before starting?","Best renovation companies in Singapore that also do aircon installation","Is a renovation package or itemised quote cheaper for HDB?","How often should I service my aircon in Singapore HDB?","What should a renovation contract include to protect the homeowner?","Which aircon brand is best for Singapore HDB 2026?"];
+  jps.forEach((p,i)=>sv(`pr${i+1}`,p));
+  setR('pkg','Accelerated');
+  const kpiBL=['3–5/month','~170 visits','0','0%','DA 6','0 articles','—'];
+  const kpiTG=['20–30/month','3,500+ visits','30+ keywords','15%+ share of voice','DA 20','24 articles','5,000+'];
+  kpiBL.forEach((v,i)=>sv(`kb${i}`,v));kpiTG.forEach((v,i)=>sv(`kt${i}`,v));
+  setR('tone','Warm & Trustworthy');
+  sv('f_voice','Friendly, reassuring, and transparent. We want homeowners to feel like they\'ve found a contractor they can trust — like getting a renovation recommendation from a friend who\'s already done it. No jargon, no overselling, no pressure.');
+  sv('f_avoid_t','Competitor brand names, claims about "lowest price guaranteed" without data, property investment advice, anything outside their renovation and aircon service scope');
+  setC('cf_bl');setC('cf_ig');setC('cf_ba');setC('cf_vd');setC('cf_gd');
+  setR('cms','Wix');setR('host','Leadar.Digital managed hosting');
+  sv('f_tech','Current Wix site has significant SEO limitations — cannot edit robots.txt, no custom schema markup, no blog with proper SEO architecture, slow mobile load (~6–7 seconds). GA4 not installed. Google Search Console not set up. Recommend migrating to WordPress on Leadar.Digital managed hosting as part of Month 1 scope.');
+  sv('f_fee','SGD 2,150/month');sv('f_setup','SGD 5,380 one-time (Website: SGD 4,388 + Branding: SGD 992)');
+  setR('ct','6-Month Pilot');setR('pt','Net 15');
+  sv('f_inv','Jane — jnsdesignbuild.sales@gmail.com');sv('f_valid','30 days from 21 February 2026');
+  sv('f_notes','Client expressed strong interest in TikTok before/after renovation content — explore as performance add-on at Month 3 review. JB operations to get a separate geo-targeted content cluster from Month 4 (separate keyword universe in Malay/English for Johor market). Carousell reviews should be systematically migrated to Google Business Profile to strengthen local SEO trust signals.');
+  sv('f_ref','LD-2026-JNS-001');sv('f_by','Khurram Chaudhry');sv('f_role','Head of Agency Operations');
+}
+
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let state = {
+  campaigns: [],
+  team: [],
+  editingCampaign: null,
+  editingTeam: null,
+};
+
+const ROLES = ['SEO Strategist','Content Writer','GEO Specialist','Web Developer','Graphic Designer','Social Media Manager','Account Manager','Technical SEO','Copywriter','Video Editor'];
+const AVATAR_COLORS = ['#0A2342','#00C2A8','#F5A623','#1E7E4A','#7B4FD4','#E53E3E','#2B6CB0','#C05621'];
+const PKG_DEFAULTS = {
+  Startup: [
+    {name:'Domain Name Registration & Setup',role:'Web Developer',hrs:2,months:[1]},
+    {name:'Professional Email Address Setup',role:'Technical SEO',hrs:2,months:[1]},
+    {name:'Website Design & Development',role:'Web Developer',hrs:30,months:[1]},
+    {name:'Logo Design & Brand Identity',role:'Graphic Designer',hrs:14,months:[1]},
+    {name:'Branding & Graphics Package',role:'Graphic Designer',hrs:10,months:[1,2]},
+    {name:'SEO-Optimised Content Creation (2–4 articles)',role:'Content Writer',hrs:16,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Social Media Marketing & Management',role:'Social Media Manager',hrs:12,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Content Marketing Strategy',role:'SEO Strategist',hrs:8,months:[1,4,7,10]},
+    {name:'Monthly Reporting & Strategy Call',role:'Account Manager',hrs:4,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+  ],
+  Accelerated: [
+    {name:'Domain Name Registration & Setup',role:'Web Developer',hrs:2,months:[1]},
+    {name:'Professional Email Address Setup',role:'Technical SEO',hrs:2,months:[1]},
+    {name:'Website Design & Development',role:'Web Developer',hrs:30,months:[1]},
+    {name:'Logo Design & Brand Identity',role:'Graphic Designer',hrs:14,months:[1]},
+    {name:'Branding & Graphics Package',role:'Graphic Designer',hrs:10,months:[1,2]},
+    {name:'SEO-Optimised Content Creation (4–8 articles)',role:'Content Writer',hrs:28,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Social Media Marketing & Management',role:'Social Media Manager',hrs:14,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Content Marketing Strategy',role:'SEO Strategist',hrs:10,months:[1,4,7,10]},
+    {name:'Email Marketing Campaigns & Automation',role:'Copywriter',hrs:12,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Telemarketing & Outbound Call Campaigns',role:'Account Manager',hrs:16,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Lead Nurturing & CRM Integration',role:'Technical SEO',hrs:8,months:[1,2]},
+    {name:'Monthly Reporting + Strategy Call',role:'Account Manager',hrs:6,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+  ],
+  Growth: [
+    {name:'Domain Name Registration & Setup',role:'Web Developer',hrs:2,months:[1]},
+    {name:'Professional Email Address Setup',role:'Technical SEO',hrs:2,months:[1]},
+    {name:'Website Design & Development',role:'Web Developer',hrs:30,months:[1]},
+    {name:'Logo Design & Brand Identity',role:'Graphic Designer',hrs:14,months:[1]},
+    {name:'Branding & Graphics Package',role:'Graphic Designer',hrs:10,months:[1,2]},
+    {name:'SEO-Optimised Content Creation (8–12 articles)',role:'Content Writer',hrs:44,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Social Media Marketing & Management',role:'Social Media Manager',hrs:16,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Content Marketing Strategy',role:'SEO Strategist',hrs:12,months:[1,4,7,10]},
+    {name:'Email Marketing Campaigns & Automation',role:'Copywriter',hrs:14,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Telemarketing & Outbound Call Campaigns',role:'Account Manager',hrs:16,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Lead Nurturing & CRM Integration',role:'Technical SEO',hrs:8,months:[1,2]},
+    {name:'Online Reputation Management (ORM)',role:'Account Manager',hrs:10,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Public Relations & Media Outreach',role:'Copywriter',hrs:14,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Press & Editorial Placement Strategy',role:'Copywriter',hrs:10,months:[2,4,6,8,10,12]},
+    {name:'AI Marketing Toolsuite Access & Management',role:'GEO Specialist',hrs:12,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'AI-Powered Chat & Customer Engagement Setup',role:'Technical SEO',hrs:10,months:[1,2]},
+    {name:'Predictive Analytics & AI Insights Reporting',role:'GEO Specialist',hrs:8,months:[2,3,4,5,6,7,8,9,10,11,12]},
+    {name:'Monthly + Quarterly Reporting & Strategy Call',role:'Account Manager',hrs:10,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
+  ]
+};
+
+// ════════════════════════════════════════════════════
+// INIT — seed with Khurram as owner
+// ════════════════════════════════════════════════════
+// Init called from unified DOMContentLoaded below
+function initOps(){
+  state.team = [{
+    id: uid(), name: 'Khurram Chaudhry', role: 'Head of Agency Operations',
+    type: 'owner', hours: 120, specs: ['SEO Strategist','GEO Specialist','Account Manager','Technical SEO'],
+    cost: '', color: AVATAR_COLORS[0]
+  }];
+  const todayStr = new Date().toISOString().split('T')[0];
+  const cStart = document.getElementById('c_start');
+  if(cStart) cStart.value = todayStr;
+  renderAll();
+  buildSpecPills();
+}
+
+// ════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════
+function switchTab(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════
+// RENDER ALL
+// ════════════════════════════════════════════════════
+function renderAll(){
+  renderDashboard();
+  renderCampaigns();
+  renderCapacity();
+  renderTimeline();
+  renderTeam();
+  updateBadges();
+}
+
+// ════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════
+function renderDashboard(){
+  const el = document.getElementById('dashboard-content');
+  const active = state.campaigns.filter(c=>c.status!=='complete');
+  const totalRevenue = state.campaigns.reduce((s,c)=>s+parseFloat(c.feeNum||0),0);
+  const totalHrsMonth = calcTotalHrsThisMonth();
+  const totalCapacity = state.team.reduce((s,t)=>s+parseInt(t.hours||0),0);
+  const utilPct = totalCapacity>0 ? Math.round(totalHrsThisMonth()/totalCapacity*100) : 0;
+  const overloaded = getOverloadedPeople();
+  const hireAlerts = generateHireAlerts();
+
+  el.innerHTML = `
+    <div class="sh"><div class="sh-l"><div>
+      <div class="sh-tag">Agency Overview</div>
+      <div class="sh-title">Operations Dashboard</div>
+    </div></div>
+    <div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">${today()}</div></div>
+
+    <div class="g4" style="margin-bottom:20px">
+      <div class="ocard navy">
+        <div class="card-label">Active Campaigns</div>
+        <div class="card-val">${active.length}</div>
+        <div class="card-sub">${state.campaigns.length} total in system</div>
+      </div>
+      <div class="ocard ${utilPct>90?'red':utilPct>70?'gold':'teal'}">
+        <div class="card-label">Team Utilisation</div>
+        <div class="card-val">${utilPct}%</div>
+        <div class="card-sub">${totalHrsThisMonth()} hrs needed / ${totalCapacity} hrs available this month</div>
+      </div>
+      <div class="ocard">
+        <div class="card-label">Monthly Retainer Revenue</div>
+        <div class="card-val" style="font-size:22px;color:var(--teal)">SGD ${totalRevenue.toLocaleString()}</div>
+        <div class="card-sub">Across ${active.length} active campaigns</div>
+      </div>
+      <div class="ocard ${overloaded.length>0?'red':'green'}">
+        <div class="card-label">Capacity Alerts</div>
+        <div class="card-val">${overloaded.length}</div>
+        <div class="card-sub">${overloaded.length===0?'All roles within capacity':'People over capacity this month'}</div>
+      </div>
+    </div>
+
+    ${hireAlerts.length>0 ? `
+    <div style="margin-bottom:20px">
+      <div class="sh-tag" style="margin-bottom:10px">⚠️ Hire / Capacity Alerts</div>
+      ${hireAlerts.map(a=>`
+        <div class="hire-alert">
+          <div class="ha-icon">${a.icon}</div>
+          <div>
+            <div class="ha-title">${a.title}</div>
+            <div class="ha-body">${a.body}</div>
+          </div>
+        </div>`).join('')}
+    </div>` : ''}
+
+    ${active.length>0 ? `
+    <div class="sh-tag" style="margin-bottom:12px">Campaign Health</div>
+    <table class="tbl" style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--card-shadow)">
+      <thead><tr>
+        <th>Campaign</th><th>Package</th><th>Month</th><th>Progress</th>
+        <th>Hrs This Month</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+        ${active.map(c=>{
+          const m = campaignMonth(c);
+          const hrsNeeded = hrsThisMonth(c,m);
+          const pct = Math.round((m-1)/(c.duration||6)*100);
+          return `<tr>
+            <td><strong>${c.name}</strong><br><span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">${c.industry||''}</span></td>
+            <td><span class="spill spill-navy">${c.pkg||'Growth'}</span></td>
+            <td class="num">M${m} / ${c.duration||6}</td>
+            <td style="min-width:140px">
+              <div class="cc-prog-track"><div class="cc-prog-fill" style="width:${pct}%"></div></div>
+              <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px">${pct}% through campaign</div>
+            </td>
+            <td class="num">${hrsNeeded} hrs</td>
+            <td><span class="spill ${statusPill(c)}">${c.status||'active'}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>` : `
+    <div class="empty">
+      <div class="empty-icon">🚀</div>
+      <div class="empty-title">Ready to launch</div>
+      <div class="empty-sub">Add your first campaign to start tracking workload, capacity, and delivery timelines.</div>
+      <button class="btn btn-primary" onclick="openModal('campaign')">Add First Campaign</button>
+    </div>`}
+  `;
+}
+
+// ════════════════════════════════════════════════════
+// CAMPAIGNS
+// ════════════════════════════════════════════════════
+function renderCampaigns(){
+  const el = document.getElementById('campaigns-list');
+  document.getElementById('tab-campaigns-badge').textContent = state.campaigns.length;
+  if(!state.campaigns.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No campaigns yet</div><div class="empty-sub">Add a campaign from the Proposal Generator or enter details manually.</div><button class="btn btn-primary" onclick="openModal('campaign')">Add Campaign</button></div>`;
+    return;
+  }
+  el.innerHTML = state.campaigns.map(c=>{
+    const m = campaignMonth(c);
+    const hrsNow = hrsThisMonth(c,m);
+    const pct = Math.round((m-1)/(c.duration||6)*100);
+    const assignments = c.assignments||{};
+    const assignStr = Object.entries(assignments).map(([role,name])=>`<span class="tag">${name} — ${role}</span>`).join('');
+    return `
+    <div class="cc">
+      <div class="cc-top">
+        <div>
+          <div class="cc-name">${c.name}</div>
+          <div class="cc-meta">${c.industry||''} &nbsp;·&nbsp; Started ${fmtDate(c.start)} &nbsp;·&nbsp; ${c.duration||6}-month ${c.pkg||'Growth'}</div>
+        </div>
+        <div class="cc-right">
+          <span class="spill ${statusPill(c)}">${c.status||'active'}</span>
+          <button class="btn btn-ghost btn-sm" onclick="editCampaign('${c.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCampaign('${c.id}')">✕</button>
+        </div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-stat"><div class="cc-stat-n">${c.fee||'—'}</div><div class="cc-stat-l">Monthly Fee</div></div>
+        <div class="cc-stat"><div class="cc-stat-n">M${m}</div><div class="cc-stat-l">Current Month</div></div>
+        <div class="cc-stat"><div class="cc-stat-n">${hrsNow}</div><div class="cc-stat-l">Hrs This Month</div></div>
+        <div class="cc-stat"><div class="cc-stat-n">${(c.deliverables||[]).length}</div><div class="cc-stat-l">Deliverables</div></div>
+        <div class="cc-stat"><div class="cc-stat-n">${c.duration||6}</div><div class="cc-stat-l">Months Total</div></div>
+      </div>
+      <div class="cc-progress">
+        <div class="cc-prog-label"><span>Campaign progress</span><span>${pct}%</span></div>
+        <div class="cc-prog-track"><div class="cc-prog-fill" style="width:${pct}%"></div></div>
+      </div>
+      ${assignStr ? `<div style="margin-top:12px">${assignStr}</div>` : ''}
+      <div style="margin-top:14px">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Month ${m} Deliverables</div>
+        ${(c.deliverables||[]).filter(d=>d.months.includes(m)).map(d=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--off);border-radius:6px;margin-bottom:5px;font-size:12.5px">
+            <div>${d.name} <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">${d.role}</span></div>
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--teal)">${d.hrs} hrs</div>
+          </div>`).join('') || '<div style="color:var(--muted);font-size:12px">No deliverables this month</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════
+// CAPACITY
+// ════════════════════════════════════════════════════
+function renderCapacity(){
+  const el = document.getElementById('capacity-content');
+  const hireAlerts = generateHireAlerts();
+  const overloaded = getOverloadedPeople();
+  document.getElementById('tab-capacity-warn').style.display = overloaded.length>0?'inline-flex':'none';
+
+  if(!state.team.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No team yet</div><div class="empty-sub">Add yourself and any team members or freelancers to start capacity planning.</div><button class="btn btn-primary" onclick="switchTab('team')">Go to Team</button></div>`;
+    return;
+  }
+
+  // Build per-person workload
+  const personLoad = calcPersonLoad();
+  const months = getActiveMonths();
+
+  let html = '';
+
+  // Hire alerts
+  if(hireAlerts.length){
+    html += `<div style="margin-bottom:20px">${hireAlerts.map(a=>`<div class="hire-alert"><div class="ha-icon">${a.icon}</div><div><div class="ha-title">${a.title}</div><div class="ha-body">${a.body}</div></div></div>`).join('')}</div>`;
+  }
+
+  // Heatmap
+  if(months.length){
+    html += `
+    <div class="ocard" style="margin-bottom:20px;overflow-x:auto">
+      <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:14px">Workload Heatmap — Hours per Month</div>
+      <div class="hm-header">
+        ${months.map(m=>`<div class="hm-h">${m}</div>`).join('')}
+        <div class="hm-h" style="width:44px">Avail</div>
+      </div>
+      ${state.team.map(person=>{
+        const load = personLoad[person.id]||{};
+        const avail = parseInt(person.hours)||80;
+        return `<div class="hm-row">
+          <div class="hm-name">${person.name}</div>
+          <div class="hm-cells">
+            ${months.map(m=>{
+              const hrs = load[m]||0;
+              const ratio = hrs/avail;
+              const lvl = hrs===0?0:ratio<0.4?1:ratio<0.6?2:ratio<0.8?3:ratio<1?4:5;
+              return `<div class="hm-cell hm-${lvl}" title="${person.name}: ${hrs} hrs in ${m}\n${Math.round(ratio*100)}% utilised">${hrs||''}</div>`;
+            }).join('')}
+            <div style="width:44px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);display:flex;align-items:center;padding-left:8px">${avail}h</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="display:flex;gap:10px;margin-top:14px;font-size:11px;align-items:center;flex-wrap:wrap">
+        <span style="color:var(--muted);font-family:'DM Mono',monospace">Legend:</span>
+        <span class="hm-cell hm-0" style="width:auto;padding:2px 8px;border-radius:4px">0 hrs</span>
+        <span class="hm-cell hm-1" style="width:auto;padding:2px 8px;border-radius:4px">&lt;40%</span>
+        <span class="hm-cell hm-2" style="width:auto;padding:2px 8px;border-radius:4px">40–60%</span>
+        <span class="hm-cell hm-3" style="width:auto;padding:2px 8px;border-radius:4px">60–80%</span>
+        <span class="hm-cell hm-4" style="width:auto;padding:2px 8px;border-radius:4px">80–100%</span>
+        <span class="hm-cell hm-5" style="width:auto;padding:2px 8px;border-radius:4px">OVER</span>
+      </div>
+    </div>`;
+  }
+
+  // Per-person breakdown
+  html += `<div class="g2">`;
+  state.team.forEach(person=>{
+    const load = personLoad[person.id]||{};
+    const avail = parseInt(person.hours)||80;
+    const thisMonth = load[currentMonth()]||0;
+    const ratio = thisMonth/avail;
+    const barClass = ratio<0.8?'cap-ok':ratio<1?'cap-warn':'cap-over';
+    const overMonths = months.filter(m=>(load[m]||0)>avail);
+    html += `
+    <div class="ocard">
+      <div class="person-top">
+        <div class="person-avatar" style="background:${person.color||AVATAR_COLORS[0]}">${initials(person.name)}</div>
+        <div>
+          <div class="person-name">${person.name}</div>
+          <div class="person-role">${person.role} · ${person.type}</div>
+        </div>
+      </div>
+      <div class="cap-bar-wrap">
+        <div class="cap-label"><span>${thisMonth} hrs this month</span><span>${avail} hrs available</span></div>
+        <div class="cap-bar-track"><div class="cap-bar-fill ${barClass}" style="width:${Math.min(ratio*100,100)}%"></div></div>
+        <div class="cap-label" style="margin-top:3px"><span style="color:${ratio>1?'var(--red)':ratio>0.8?'var(--gold)':'var(--teal)'}">${Math.round(ratio*100)}% utilised</span><span>${overMonths.length>0?`<span style="color:var(--red)">⚠ Over capacity: ${overMonths.join(', ')}</span>`:''}</span></div>
+      </div>
+      ${person.specs&&person.specs.length?`<div style="margin-top:10px;font-size:11px;color:var(--muted)">Handles: ${person.specs.map(s=>`<span class="tag">${s}</span>`).join('')}</div>`:''}
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Role gap analysis
+  const roleGaps = findRoleGaps();
+  if(roleGaps.length){
+    html += `
+    <div class="ocard" style="margin-top:20px;border-color:rgba(229,62,62,.3);background:var(--red-lt)">
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px">🚨 Uncovered Roles — These deliverables have no one assigned</div>
+      <table class="tbl" style="background:#fff">
+        <thead><tr><th>Role Needed</th><th>Campaigns Affected</th><th>Hours/Month</th><th>Recommendation</th></tr></thead>
+        <tbody>${roleGaps.map(g=>`
+          <tr><td><strong>${g.role}</strong></td><td>${g.campaigns.join(', ')}</td><td class="num">${g.hrs} hrs</td>
+          <td><span class="spill spill-red">Hire / Assign Freelancer</span></td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════
+// TIMELINE
+// ════════════════════════════════════════════════════
+function renderTimeline(){
+  const el = document.getElementById('timeline-content');
+  if(!state.campaigns.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No campaigns to show</div><div class="empty-sub">Add campaigns to see the master delivery timeline.</div></div>`;
+    return;
+  }
+
+  const months = getActiveMonths();
+  let html = `<div class="tl-grid">`;
+
+  state.campaigns.forEach(c=>{
+    const cStart = new Date(c.start);
+    const dur = parseInt(c.duration)||6;
+    html += `
+    <div class="ocard" style="margin-bottom:20px;padding:0;overflow:hidden">
+      <div style="background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:15px;color:#fff">${c.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace">${c.pkg} · ${dur} months · from ${fmtDate(c.start)}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span class="spill spill-teal">${(c.deliverables||[]).length} deliverables</span>
+          <span class="spill ${statusPill(c)}">${c.status||'active'}</span>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+      <table class="tl-table">
+        <thead>
+          <tr class="tl-month-group">
+            <th class="task-col">Deliverable</th>
+            ${months.map(m=>`<th>${m}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${(c.deliverables||[]).map(d=>{
+            const assignment = (c.assignments||{})[d.role]||'—';
+            return `<tr>
+              <td class="task-name">
+                ${d.name}
+                <span class="role-tag">${d.role} · ${assignment} · ${d.hrs}h</span>
+              </td>
+              ${months.map(m=>{
+                const mIdx = monthIndex(m);
+                const cIdx = monthsBetween(cStart, parseMonth(m));
+                if(cIdx<0||cIdx>=dur) return `<td></td>`;
+                const mNum = cIdx+1;
+                const isActive = d.months.includes(mNum);
+                const isCurrent = mNum===campaignMonth(c);
+                return `<td><div class="tl-cell ${isActive?(isCurrent?'partial':'active'):''}" title="${isActive?d.hrs+' hrs':''}">${isActive&&isCurrent?'●':isActive?'·':''}</div></td>`;
+              }).join('')}
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      </div>
+    </div>`;
+  });
+
+  html += `<div style="display:flex;gap:14px;font-size:12px;align-items:center;flex-wrap:wrap;margin-top:6px">
+    <span style="color:var(--muted);font-family:'DM Mono',monospace">Legend:</span>
+    <span><span style="display:inline-block;width:14px;height:14px;background:var(--teal);border-radius:3px;opacity:.8;vertical-align:middle;margin-right:5px"></span>Scheduled</span>
+    <span><span style="display:inline-block;width:14px;height:14px;background:var(--gold);border-radius:3px;opacity:.8;vertical-align:middle;margin-right:5px"></span>Current Month</span>
+  </div></div>`;
+
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════
+// TEAM
+// ════════════════════════════════════════════════════
+function renderTeam(){
+  const el = document.getElementById('team-list');
+  if(!state.team.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">No team members</div><div class="empty-sub">Add yourself first, then freelancers as you onboard them.</div><button class="btn btn-primary" onclick="openModal('team')">Add Person</button></div>`;
+    return;
+  }
+  const personLoad = calcPersonLoad();
+  el.innerHTML = `<div class="g3">` + state.team.map(person=>{
+    const avail = parseInt(person.hours)||80;
+    const thisMonth = (personLoad[person.id]||{})[currentMonth()]||0;
+    const ratio = thisMonth/avail;
+    const barClass = ratio<0.8?'cap-ok':ratio<1?'cap-warn':'cap-over';
+    return `
+    <div class="ocard">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+        <div class="person-top" style="margin-bottom:0">
+          <div class="person-avatar" style="background:${person.color||AVATAR_COLORS[0]}">${initials(person.name)}</div>
+          <div>
+            <div class="person-name">${person.name}</div>
+            <div class="person-role">${person.role}</div>
+            <div style="margin-top:3px"><span class="spill ${person.type==='owner'?'spill-teal':person.type==='in-house'?'spill-navy':'spill-gold'}">${person.type}</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-ghost btn-sm" onclick="editTeamMember('${person.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${person.id}')">✕</button>
+        </div>
+      </div>
+      <div class="cap-bar-wrap">
+        <div class="cap-label"><span>${thisMonth} hrs assigned</span><span>${avail} hrs/mo</span></div>
+        <div class="cap-bar-track"><div class="cap-bar-fill ${barClass}" style="width:${Math.min(ratio*100,100)}%"></div></div>
+      </div>
+      ${person.specs&&person.specs.length?`<div style="margin-top:10px">${person.specs.map(s=>`<span class="tag">${s}</span>`).join('')}</div>`:''}
+      ${person.cost?`<div style="margin-top:8px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">${person.cost}</div>`:''}
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+// ════════════════════════════════════════════════════
+// CALCULATIONS
+// ════════════════════════════════════════════════════
+function campaignMonth(c){
+  const start = new Date(c.start);
+  const now = new Date();
+  const diff = (now.getFullYear()-start.getFullYear())*12 + (now.getMonth()-start.getMonth());
+  return Math.min(Math.max(diff+1,1), parseInt(c.duration)||6);
+}
+
+function hrsThisMonth(c, m){
+  return (c.deliverables||[]).filter(d=>d.months.includes(m)).reduce((s,d)=>s+parseInt(d.hrs||0),0);
+}
+
+function totalHrsThisMonth(){
+  return state.campaigns.reduce((s,c)=>s+hrsThisMonth(c,campaignMonth(c)),0);
+}
+
+function calcTotalHrsThisMonth(){ return totalHrsThisMonth(); }
+
+function calcPersonLoad(){
+  const load = {};
+  state.team.forEach(p=>{ load[p.id]={}; });
+
+  state.campaigns.forEach(c=>{
+    const start = new Date(c.start);
+    const dur = parseInt(c.duration)||6;
+    (c.deliverables||[]).forEach(d=>{
+      // Find assigned person
+      const assignedName = (c.assignments||{})[d.role];
+      const person = state.team.find(p=>p.name===assignedName || p.specs?.includes(d.role));
+      if(!person) return;
+      d.months.forEach(mNum=>{
+        if(mNum<1||mNum>dur) return;
+        const mDate = new Date(start);
+        mDate.setMonth(mDate.getMonth()+mNum-1);
+        const key = mDate.toLocaleString('en',{month:'short',year:'2-digit'});
+        if(!load[person.id][key]) load[person.id][key]=0;
+        load[person.id][key]+=parseInt(d.hrs||0);
+      });
+    });
+  });
+  return load;
+}
+
+function getActiveMonths(){
+  const months = new Set();
+  state.campaigns.forEach(c=>{
+    const start = new Date(c.start);
+    const dur = parseInt(c.duration)||6;
+    for(let i=0;i<dur;i++){
+      const d = new Date(start);
+      d.setMonth(d.getMonth()+i);
+      months.add(d.toLocaleString('en',{month:'short',year:'2-digit'}));
+    }
+  });
+  return Array.from(months).sort((a,b)=>parseMonth(a)-parseMonth(b));
+}
+
+function parseMonth(str){
+  const parts = str.split(' ');
+  const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  const y = parseInt('20'+parts[1]);
+  return new Date(y, months[parts[0]], 1);
+}
+
+function monthsBetween(start, target){
+  return (target.getFullYear()-start.getFullYear())*12 + (target.getMonth()-start.getMonth());
+}
+
+function currentMonth(){
+  return new Date().toLocaleString('en',{month:'short',year:'2-digit'});
+}
+
+function monthIndex(str){
+  return parseMonth(str).getTime();
+}
+
+function getOverloadedPeople(){
+  const load = calcPersonLoad();
+  return state.team.filter(p=>{
+    const avail = parseInt(p.hours)||80;
+    const thisM = (load[p.id]||{})[currentMonth()]||0;
+    return thisM>avail;
+  });
+}
+
+function findRoleGaps(){
+  const gaps = {};
+  state.campaigns.forEach(c=>{
+    const m = campaignMonth(c);
+    (c.deliverables||[]).filter(d=>d.months.includes(m)).forEach(d=>{
+      const assignedName = (c.assignments||{})[d.role];
+      const covered = state.team.some(p=>p.name===assignedName||p.specs?.includes(d.role));
+      if(!covered){
+        if(!gaps[d.role]) gaps[d.role]={role:d.role,campaigns:[],hrs:0};
+        if(!gaps[d.role].campaigns.includes(c.name)) gaps[d.role].campaigns.push(c.name);
+        gaps[d.role].hrs+=parseInt(d.hrs||0);
+      }
+    });
+  });
+  return Object.values(gaps);
+}
+
+function generateHireAlerts(){
+  const alerts = [];
+  const overloaded = getOverloadedPeople();
+  const gaps = findRoleGaps();
+  const load = calcPersonLoad();
+
+  if(gaps.length>0){
+    alerts.push({
+      icon:'🚨',
+      title:`${gaps.length} role${gaps.length>1?'s':''} uncovered — deliverables will be missed`,
+      body:`No one on your team is assigned to cover: <strong>${gaps.map(g=>g.role).join(', ')}</strong>. These roles need either a hire or a freelancer assignment before the next delivery cycle.`
+    });
+  }
+
+  overloaded.forEach(p=>{
+    const avail = parseInt(p.hours)||80;
+    const thisM = (load[p.id]||{})[currentMonth()]||0;
+    const over = thisM-avail;
+    alerts.push({
+      icon:'⚠️',
+      title:`${p.name} is over capacity this month by ${over} hrs`,
+      body:`${p.name} has <strong>${thisM} hrs</strong> of work scheduled but only <strong>${avail} hrs</strong> available. Either reassign deliverables to another team member, bring in a freelancer for the overflow, or reduce scope with the client.`
+    });
+  });
+
+  // Upcoming overload in next 2 months
+  const upcoming = getActiveMonths().slice(0,3);
+  state.team.forEach(p=>{
+    const avail = parseInt(p.hours)||80;
+    upcoming.forEach(m=>{
+      const hrs = (load[p.id]||{})[m]||0;
+      if(hrs>avail && m!==currentMonth()){
+        alerts.push({
+          icon:'📅',
+          title:`${p.name} will be over capacity in ${m}`,
+          body:`Forecast: <strong>${hrs} hrs</strong> needed vs <strong>${avail} hrs</strong> available. Plan now — assign a freelancer or level the workload before it becomes an emergency.`
+        });
+      }
+    });
+  });
+
+  return alerts;
+}
+
+function statusPill(c){
+  const s = c.status||'active';
+  return s==='active'?'spill-teal':s==='at-risk'?'spill-gold':s==='complete'?'spill-green':'spill-navy';
+}
+
+// ════════════════════════════════════════════════════
+// CAMPAIGN MODAL
+// ════════════════════════════════════════════════════
+let deliverableCount = 0;
+
+function openModal(type, id){
+  if(type==='campaign'){
+    state.editingCampaign = id||null;
+    deliverableCount = 0;
+    document.getElementById('campaign-modal-title').textContent = id?'Edit Campaign':'New Campaign';
+    // (import panel reset handled by file input)
+
+    if(id){
+      const c = state.campaigns.find(x=>x.id===id);
+      if(c){
+        sv('c_name',c.name);sv('c_industry',c.industry||'');sv('c_fee',c.fee||'');
+        sv('c_start',c.start);sv2('c_pkg',c.pkg||'Growth');sv2('c_duration',String(c.duration||6));
+        document.getElementById('deliverables-list').innerHTML='';
+        (c.deliverables||[]).forEach(d=>addDeliverableRow(d));
+        renderAssignments(c.deliverables||[],c.assignments||{});
+      }
+    } else {
+      sv('c_name','');sv('c_industry','');sv('c_fee','');
+      const t=new Date().toISOString().split('T')[0]; sv('c_start',t);
+      sv2('c_pkg','Growth');sv2('c_duration','6');
+      document.getElementById('deliverables-list').innerHTML='';
+      PKG_DEFAULTS['Growth'].forEach(d=>addDeliverableRow(d));
+      renderAssignments(PKG_DEFAULTS['Growth'],[]);
+    }
+  }
+  if(type==='team'){
+    state.editingTeam = id||null;
+    document.getElementById('team-modal-title').textContent = id?'Edit Team Member':'Add Team Member';
+    if(id){
+      const p = state.team.find(x=>x.id===id);
+      if(p){
+        sv('t_name',p.name);sv('t_role',p.role);sv('t_cost',p.cost||'');sv('t_hours',p.hours||'');
+        sv2('t_type',p.type||'in-house');
+        buildSpecPills(p.specs||[]);
+      }
+    } else {
+      sv('t_name','');sv('t_role','');sv('t_cost','');sv('t_hours','');
+      buildSpecPills([]);
+    }
+  }
+  document.getElementById('modal-'+type).classList.add('open');
+}
+
+function closeModal(type){
+  document.getElementById('modal-'+type).classList.remove('open');
+}
+
+function updatePackageDefaults(){
+  const pkg = gv('c_pkg');
+  document.getElementById('deliverables-list').innerHTML='';
+  deliverableCount=0;
+  PKG_DEFAULTS[pkg].forEach(d=>addDeliverableRow(d));
+  renderAssignments(PKG_DEFAULTS[pkg],[]);
+}
+
+function addDeliverable(){ addDeliverableRow({name:'',role:'Content Writer',hrs:8,months:[1,2,3,4,5,6]}); }
+
+function addDeliverableRow(d){
+  const id = deliverableCount++;
+  const cont = document.getElementById('deliverables-list');
+  const row = document.createElement('div');
+  row.id = `drow-${id}`;
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 160px 60px 1fr 30px;gap:7px;margin-bottom:7px;align-items:center';
+  const monthStr = (d.months||[1,2,3,4,5,6]).join(',');
+  row.innerHTML = `
+    <input class="fi" type="text" placeholder="Deliverable name" value="${d.name||''}" id="dn-${id}" style="font-size:12px">
+    <select class="fi" id="dr-${id}" style="font-size:12px">
+      ${ROLES.map(r=>`<option ${r===d.role?'selected':''}>${r}</option>`).join('')}
+    </select>
+    <input class="fi" type="number" placeholder="hrs" value="${d.hrs||8}" id="dh-${id}" min="1" style="font-size:12px;text-align:center">
+    <input class="fi" type="text" placeholder="Months e.g. 1,2,3,4,5,6" value="${monthStr}" id="dm-${id}" style="font-size:12px">
+    <button onclick="document.getElementById('drow-${id}').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:0">✕</button>
+  `;
+  cont.appendChild(row);
+}
+
+function getDeliverables(){
+  const rows = document.querySelectorAll('[id^="drow-"]');
+  return Array.from(rows).map(row=>{
+    const id = row.id.replace('drow-','');
+    const name = document.getElementById(`dn-${id}`)?.value||'';
+    const role = document.getElementById(`dr-${id}`)?.value||'Content Writer';
+    const hrs = parseInt(document.getElementById(`dh-${id}`)?.value||8);
+    const monthStr = document.getElementById(`dm-${id}`)?.value||'1';
+    const months = monthStr.split(',').map(m=>parseInt(m.trim())).filter(m=>!isNaN(m)&&m>0);
+    return {name,role,hrs,months};
+  }).filter(d=>d.name);
+}
+
+function renderAssignments(deliverables, existing){
+  const roles = [...new Set(deliverables.map(d=>d.role))];
+  const el = document.getElementById('assignment-list');
+  if(!roles.length){el.innerHTML='<div style="color:var(--muted);font-size:12px">Add deliverables above to assign roles</div>';return;}
+  el.innerHTML = roles.map(role=>{
+    const currentAssign = existing[role]||'';
+    return `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+      <div style="font-size:12px;font-weight:600;color:var(--navy);width:180px;flex-shrink:0">${role}</div>
+      <select class="fi" id="assign-${role.replace(/[^a-z0-9]/gi,'')}" style="font-size:12px">
+        <option value="">— Unassigned —</option>
+        ${state.team.filter(p=>!p.specs||p.specs.length===0||p.specs.includes(role)).map(p=>`<option ${p.name===currentAssign?'selected':''}>${p.name}</option>`).join('')}
+      </select>
+    </div>`;
+  }).join('');
+}
+
+function getAssignments(deliverables){
+  const roles = [...new Set(deliverables.map(d=>d.role))];
+  const assignments = {};
+  roles.forEach(role=>{
+    const key = role.replace(/[^a-z0-9]/gi,'');
+    const el = document.getElementById(`assign-${key}`);
+    if(el&&el.value) assignments[role]=el.value;
+  });
+  return assignments;
+}
+
+function saveCampaign(){
+  const name = gv('c_name');
+  if(!name){ alert('Campaign name is required'); return; }
+  const deliverables = getDeliverables();
+  const assignments = getAssignments(deliverables);
+  const feeStr = gv('c_fee');
+  const feeNum = parseFloat(feeStr.replace(/[^0-9.]/g,''))||0;
+
+  const campaign = {
+    id: state.editingCampaign || uid(),
+    name, industry: gv('c_industry'),
+    pkg: gv('c_pkg'), start: gv('c_start'),
+    duration: parseInt(gv('c_duration'))||6,
+    fee: feeStr, feeNum,
+    deliverables, assignments,
+    status: 'active',
+    createdAt: new Date().toISOString()
+  };
+
+  if(state.editingCampaign){
+    const idx = state.campaigns.findIndex(c=>c.id===state.editingCampaign);
+    if(idx>=0) state.campaigns[idx]=campaign;
+  } else {
+    state.campaigns.push(campaign);
+  }
+
+  closeModal('campaign');
+  renderAll();
+  updateOpsBadge();
+}
+
+function editCampaign(id){ openModal('campaign',id); }
+
+function deleteCampaign(id){
+  if(!confirm('Delete this campaign?')) return;
+  state.campaigns = state.campaigns.filter(c=>c.id!==id);
+  renderAll();
+  updateOpsBadge();
+}
+
+// ════════════════════════════════════════════════════
+// TEAM MODAL
+// ════════════════════════════════════════════════════
+function buildSpecPills(selected=[]){
+  const el = document.getElementById('specialisation-pills');
+  if(!el) return;
+  el.innerHTML = ROLES.map(r=>`
+    <label style="cursor:pointer;display:flex;align-items:center;gap:5px;padding:5px 10px;border:1.5px solid ${selected.includes(r)?'var(--teal)':'var(--border)'};border-radius:14px;font-size:12px;background:${selected.includes(r)?'var(--teal-lt)':'#fff'};color:${selected.includes(r)?'var(--navy)':'var(--muted)'}">
+      <input type="checkbox" ${selected.includes(r)?'checked':''} value="${r}" style="display:none" onchange="toggleSpecLabel(this)">
+      ${r}
+    </label>`).join('');
+}
+
+function toggleSpecLabel(cb){
+  const lbl = cb.closest('label');
+  if(cb.checked){
+    lbl.style.borderColor='var(--teal)';lbl.style.background='var(--teal-lt)';lbl.style.color='var(--navy)';
+  } else {
+    lbl.style.borderColor='var(--border)';lbl.style.background='#fff';lbl.style.color='var(--muted)';
+  }
+}
+
+function getSpecs(){
+  return Array.from(document.querySelectorAll('#specialisation-pills input:checked')).map(cb=>cb.value);
+}
+
+function saveTeamMember(){
+  const name = gv('t_name');
+  const role = gv('t_role');
+  if(!name||!role){ alert('Name and role are required'); return; }
+  const existingColor = state.editingTeam ? state.team.find(p=>p.id===state.editingTeam)?.color : AVATAR_COLORS[state.team.length%AVATAR_COLORS.length];
+  const person = {
+    id: state.editingTeam||uid(),
+    name, role,
+    type: gv('t_type')||'in-house',
+    hours: parseInt(gv('t_hours'))||80,
+    specs: getSpecs(),
+    cost: gv('t_cost'),
+    color: existingColor||AVATAR_COLORS[state.team.length%AVATAR_COLORS.length]
+  };
+  if(state.editingTeam){
+    const idx = state.team.findIndex(p=>p.id===state.editingTeam);
+    if(idx>=0) state.team[idx]=person;
+  } else {
+    state.team.push(person);
+  }
+  closeModal('team');
+  renderAll();
+}
+
+function editTeamMember(id){ openModal('team',id); }
+function deleteTeamMember(id){
+  if(state.team.length===1){ alert("Can't delete the only team member."); return; }
+  if(!confirm('Remove this person?')) return;
+  state.team = state.team.filter(p=>p.id!==id);
+  renderAll();
+}
+
+// ════════════════════════════════════════════════════
+// BADGES
+// ════════════════════════════════════════════════════
+function updateBadges(){
+  document.getElementById('tab-campaigns-badge').textContent = state.campaigns.length;
+  const overloaded = getOverloadedPeople();
+  const gaps = findRoleGaps();
+  const warnBadge = document.getElementById('tab-capacity-warn');
+  warnBadge.style.display = (overloaded.length||gaps.length) ? 'inline-flex' : 'none';
+}
+
+// ════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ════════════════════════════════════════════════════
+function exportData(){
+  const json = JSON.stringify(state,null,2);
+  const blob = new Blob([json],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `leadar-ops-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const imported = JSON.parse(e.target.result);
+      if(imported.campaigns && imported.team){
+        state = imported;
+        renderAll();
+        alert('Imported successfully.');
+      } else {
+        alert('Invalid file format.');
+      }
+    } catch(err){
+      alert('Could not read file.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════
+function hrsThisMonthGlobal(){ return totalHrsThisMonth(); }
+
+// Close modals on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(b=>{
+  b.addEventListener('click',e=>{ if(e.target===b){ const id=b.id.replace('modal-',''); closeModal(id); } });
+});
+
+// ══════════════════════════════════════════════════════════════
+// INTEGRATION — PROPOSAL → OPS BRIDGE
+// ══════════════════════════════════════════════════════════════
+function sendDirectToOps() {
+  const d = readData();
+  if (!d.co || d.co === '[Client Company]') {
+    alert('Please complete the proposal form before pushing to Ops.');
+    return;
+  }
+  const pkg = d.pkg || 'Growth';
+  const feeStr = d.fee || '';
+  const feeNum = parseFloat(feeStr.replace(/[^0-9.]/g, '')) || 0;
+  const dur = d.contract && d.contract.includes('12') ? 12
+            : d.contract && d.contract.includes('3') ? 3 : 6;
+  const start = d.start || new Date().toISOString().split('T')[0];
+
+  const campaign = {
+    id: uid(),
+    name: d.co,
+    industry: d.ind,
+    pkg, start,
+    duration: dur,
+    fee: feeStr,
+    feeNum,
+    deliverables: JSON.parse(JSON.stringify(PKG_DEFAULTS[pkg] || PKG_DEFAULTS['Accelerated'])),
+    assignments: {},
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    ref: d.ref,
+    contact: d.contact,
+    email: d.email,
+    geo: d.geo,
+  };
+
+  // Check if already exists by ref or name
+  const existIdx = d.ref
+    ? state.campaigns.findIndex(c => c.ref && c.ref === d.ref)
+    : state.campaigns.findIndex(c => c.name === d.co);
+
+  if (existIdx >= 0) {
+    const existing = state.campaigns[existIdx];
+    if (confirm(`"${d.co}" is already in Ops (${existing.ref || existing.name}). Update it with current proposal data?`)) {
+      campaign.id = existing.id;
+      campaign.assignments = existing.assignments; // preserve existing assignments
+      state.campaigns[existIdx] = campaign;
+      showToast(`✓ "${d.co}" updated in Ops Dashboard`);
+    } else {
+      return;
+    }
+  } else {
+    state.campaigns.push(campaign);
+    showToast(`✓ "${d.co}" pushed to Ops Dashboard — assign team members in Campaigns`);
+  }
+
+  updateOpsBadge();
+  // Switch to ops and show campaigns tab
+  switchAppView('ops');
+  setTimeout(() => switchTab('campaigns'), 50);
+}
+
+// ══════════════════════════════════════════════════════════════
+// SINGLE CONSOLIDATED INIT
+// ══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  initProposalForm();
+  initOps();
+  updateOpsBadge();
+});
+
+</script>
+</body>
+</html>

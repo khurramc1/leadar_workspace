@@ -653,8 +653,8 @@ input[type="range"]{accent-color:var(--teal)}
 </div>
 
 <div class="fsec" data-s="10">
-  <div class="fey">Section 10 — 12</div><h1 class="fh1">Technical &amp; Hosting Setup</h1>
-  <p class="fsub">Technical SEO is the foundation everything sits on. Identifying issues now means fixing them in Week 1 before they undermine the rest of the strategy.</p>
+  <div class="fey">Section 10 — 12</div><h1 class="fh1">Technical, Hosting &amp; Platform Setup</h1>
+  <p class="fsub">Technical SEO is the foundation everything sits on. This section also captures which Leadar platform services the client will be onboarded to — hosting, domain, CRM, and marketing automation.</p>
   <div class="g2">
     <div class="fg"><label class="fl">Current CMS</label>
       <div class="pills">
@@ -664,16 +664,40 @@ input[type="range"]{accent-color:var(--teal)}
         <div class="pill"><input type="radio" name="cms" id="cm_cu" value="Custom" onchange="onCMS(this.value)"><label for="cm_cu">Custom</label></div>
       </div>
     </div>
-    <div class="fg"><label class="fl">Hosting</label>
+    <div class="fg"><label class="fl">Website Hosting</label>
       <div class="pills">
-        <div class="pill"><input type="radio" name="host" id="h_ld" value="Leadar.Digital managed hosting"><label for="h_ld">Leadar.Digital (recommended)</label></div>
-        <div class="pill"><input type="radio" name="host" id="h_3p" value="Third-party"><label for="h_3p">Third-party</label></div>
-        <div class="pill"><input type="radio" name="host" id="h_cu" value="Keep current"><label for="h_cu">Keep current</label></div>
+        <div class="pill"><input type="radio" name="host" id="h_ld" value="Leadar managed hosting"><label for="h_ld">⭐ Leadar Hosting (recommended)</label></div>
+        <div class="pill"><input type="radio" name="host" id="h_3p" value="Third-party hosting"><label for="h_3p">Third-party (existing)</label></div>
+        <div class="pill"><input type="radio" name="host" id="h_cu" value="Keep current hosting"><label for="h_cu">Keep current</label></div>
       </div>
     </div>
   </div>
+  <div class="g2">
+    <div class="fg"><label class="fl">Domain Registration</label>
+      <div class="pills">
+        <div class="pill"><input type="radio" name="domain" id="d_ld" value="Leadar domain registration"><label for="d_ld">⭐ Leadar Domains (recommended)</label></div>
+        <div class="pill"><input type="radio" name="domain" id="d_ex" value="Existing domain"><label for="d_ex">Client owns (transfer or keep)</label></div>
+        <div class="pill"><input type="radio" name="domain" id="d_3p" value="Third-party registrar"><label for="d_3p">Third-party registrar</label></div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">CRM</label>
+      <div class="pills">
+        <div class="pill"><input type="radio" name="crm" id="crm_ld" value="Leadar CRM"><label for="crm_ld">⭐ Leadar CRM (recommended)</label></div>
+        <div class="pill"><input type="radio" name="crm" id="crm_ex" value="Existing CRM"><label for="crm_ex">Existing CRM (integrate)</label></div>
+        <div class="pill"><input type="radio" name="crm" id="crm_no" value="No CRM yet"><label for="crm_no">No CRM yet</label></div>
+      </div>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Marketing Automation &amp; Email Platform</label>
+    <div class="pills">
+      <div class="pill"><input type="radio" name="map" id="map_ld" value="Leadar Marketing Platform"><label for="map_ld">⭐ Leadar Marketing Platform (recommended)</label></div>
+      <div class="pill"><input type="radio" name="map" id="map_mc" value="Existing platform (Mailchimp/ActiveCampaign/other)"><label for="map_mc">Existing platform (keep)</label></div>
+      <div class="pill"><input type="radio" name="map" id="map_no" value="No marketing automation yet"><label for="map_no">Not set up yet</label></div>
+    </div>
+  </div>
+  <div class="ibox" style="margin-top:6px"><div class="ibox-icon">💡</div><div class="ibox-txt"><strong>Leadar Platform Advantage:</strong> Clients on Leadar Hosting + Leadar Domains + Leadar CRM + Leadar Marketing Platform are fully managed under one roof — one invoice, one support contact, faster deployments, and no data scattered across multiple vendors. Always recommend the full stack where possible.</div></div>
   <div class="fg hidden" id="cms-note-grp"><label class="fl" id="cms-note-lbl">Note</label><input class="fi" type="text" id="f_cms_note"></div>
-  <div class="fg"><label class="fl">Known Technical Issues</label><textarea class="fi" id="f_tech" rows="4" placeholder="e.g. Current Wix site has limited SEO control, no schema markup, no GA4, slow mobile load (~6s), no blog capability. Recommend migrating to WordPress on Leadar.Digital managed hosting as part of Month 1."></textarea></div>
+  <div class="fg"><label class="fl">Known Technical Issues</label><textarea class="fi" id="f_tech" rows="4" placeholder="e.g. Current Wix site has limited SEO control, no schema markup, no GA4, slow mobile load (~6s), no blog capability. Recommend migrating to WordPress on Leadar managed hosting as part of Month 1."></textarea></div>
 </div>
 
 <div class="fsec" data-s="11">
@@ -1080,7 +1104,7 @@ function onCMS(v){
   const g=document.getElementById('cms-note-grp');
   const l=document.getElementById('cms-note-lbl');
   const i=document.getElementById('f_cms_note');
-  if(v==='Wix'){g.classList.remove('hidden');l.textContent='Wix Note';i.value='Wix has significant SEO limitations. We recommend migrating to WordPress on Leadar.Digital managed hosting.';}
+  if(v==='Wix'){g.classList.remove('hidden');l.textContent='Wix Note';i.value='Wix has significant SEO limitations. We recommend migrating to WordPress on Leadar Managed Hosting.';}
   else if(v==='WordPress'){g.classList.remove('hidden');l.textContent='Theme / Page Builder';i.value='';i.placeholder='e.g. Elementor, Divi, Avada';}
   else{g.classList.add('hidden');}
 }
@@ -1134,7 +1158,7 @@ function readData(){
     pkg:radio('pkg')||'Accelerated',start:gv('f_start'),
     tone:radio('tone')||'Warm & Trustworthy',voice:gv('f_voice'),avoid_t:gv('f_avoid_t'),
     formats:chk(['cf_bl','cf_ig','cf_ba','cf_vd','cf_lp','cf_gd']),
-    cms:radio('cms')||'Wix',hosting:radio('host')||'Leadar.Digital managed hosting',tech:gv('f_tech'),
+    cms:radio('cms')||'Wix',hosting:radio('host')||'Leadar managed hosting',crm:radio('crm')||'Leadar CRM',map:radio('map')||'Leadar Marketing Platform',domain:radio('domain')||'Leadar domain registration',tech:gv('f_tech'),
     fee:gv('f_fee')||'SGD [X]/month',setup:gv('f_setup')||'SGD [X] one-time',
     contract:radio('ct')||'6-Month Pilot',payment:radio('pt')||'Net 15',
     inv:gv('f_inv'),valid:gv('f_valid')||'30 days from issue date',
@@ -1275,7 +1299,7 @@ function buildHTML(d){
 
 <div class="ps ab">
   <div class="p-bar"><div class="p-num">05</div><div class="p-ttl">Scope of Work &amp; Deliverables</div></div>
-  <div class="di"><div class="di-icon">🔧</div><div><div class="di-t">Technical SEO Audit &amp; Website Foundation</div><div class="di-d">Full Semrush site audit in Week 1. All critical issues resolved within 30 days.${d.cms==='Wix'?' We recommend migrating from Wix to WordPress on Leadar.Digital managed hosting — Wix caps SEO capability.':''}</div>${["Complete technical audit report with prioritised fix list","GA4 and Google Search Console setup &amp; verification","Schema markup — LocalBusiness, Service, FAQ, Review","Core Web Vitals assessment and mobile optimisation","Sitemap and robots.txt configuration",d.hosting==='Leadar.Digital managed hosting'?"Migration to Leadar.Digital managed WordPress hosting (included)":""].filter(Boolean).map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
+  <div class="di"><div class="di-icon">🔧</div><div><div class="di-t">Technical SEO Audit &amp; Website Foundation</div><div class="di-d">Full Semrush site audit in Week 1. All critical issues resolved within 30 days.${d.cms==='Wix'?' We recommend migrating from Wix to WordPress on Leadar Managed Hosting — Wix caps SEO capability.':''}</div>${["Complete technical audit report with prioritised fix list","GA4 and Google Search Console setup &amp; verification","Schema markup — LocalBusiness, Service, FAQ, Review","Core Web Vitals assessment and mobile optimisation","Sitemap and robots.txt configuration",d.hosting==='Leadar managed hosting'?"Migration to Leadar Managed WordPress Hosting — included in retainer":""].filter(Boolean).map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
   <div class="di"><div class="di-icon">📊</div><div><div class="di-t">Keyword Research &amp; Content Architecture</div><div class="di-d">Semrush Keyword Gap and Surfer SEO used to map the complete opportunity — commercial, informational, and local intent.</div>${["Full keyword universe mapped and prioritised by commercial value","Competitor gap analysis — what they rank for that "+d.co+" doesn't yet","Topic cluster map — pillar pages and supporting content mapped","Quarterly content calendar with Surfer briefs for execution"].map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
   <div class="di"><div class="di-icon">✍️</div><div><div class="di-t">Monthly Content Production — ${pkgArt[d.pkg]||'4–8'} pieces/month</div><div class="di-d">Every piece written to rank on Google AND be cited by AI. Surfer SEO optimised to 80+ before publish. Written to ${d.tone||'your brand voice'}.</div>${[pkgArt[d.pkg]+" SEO + GEO optimised articles per month","Surfer SEO score 80+ on every piece before publishing","Meta titles, descriptions and schema-ready headings included","Internal linking architecture built into every article",isID?"Before/after project showcases formatted for AI citation and Google image search":""].filter(Boolean).map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
   <div class="di"><div class="di-icon">🤖</div><div><div class="di-t">GEO — AI Search Visibility Programme</div><div class="di-d">The service no other agency in Singapore is delivering at this level. We track and build ${d.co}'s presence inside AI-generated answers — systematically and measurably.</div>${["15 AI prompts monitored weekly in Otterly.ai from Day 1","Weekly citation report — are you appearing in ChatGPT, Perplexity, Gemini?","Answer-optimised content targeting your highest-priority AI prompts","Digital PR to build citations on authoritative sites AI engines trust","Monthly GEO report with competitive benchmark vs top 3 competitors"].map(c=>`<div class="di-c">${c}</div>`).join('')}</div></div>
@@ -1319,7 +1343,7 @@ function buildHTML(d){
       ${d.pkg==='Accelerated'||d.pkg==='Growth'?`<tr><td>Email Marketing Campaigns &amp; Automation</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>Telemarketing &amp; Outbound Call Campaigns</td><td>Monthly</td><td class="pc">Included</td></tr>`:''}
       ${d.pkg==='Growth'?`<tr><td>Online Reputation Management (ORM)</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>Public Relations &amp; Media Outreach</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>AI Marketing Toolsuite &amp; AI Chat Integration</td><td>Monthly</td><td class="pc">Included</td></tr><tr><td>Predictive Analytics &amp; AI Insights</td><td>Monthly</td><td class="pc">Included</td></tr>`:''}
       <tr><td>Monthly Reports + Strategy Call</td><td>Monthly</td><td class="pc">Included</td></tr>
-      ${d.hosting==='Leadar.Digital managed hosting'?'<tr><td>Leadar.Digital Managed WordPress Hosting</td><td>Annual</td><td class="pc">Included</td></tr>':''}
+      ${d.hosting==='Leadar managed hosting'?'<tr><td>Leadar Managed Hosting</td><td>Annual</td><td class="pc">Included</td></tr>':''}${d.crm==='Leadar CRM'?'<tr><td>Leadar CRM — Pipeline &amp; contact management</td><td>Monthly</td><td class="pc">Included</td></tr>':''}${d.map==='Leadar Marketing Platform'?'<tr><td>Leadar Marketing Platform — Email &amp; automation</td><td>Monthly</td><td class="pc">Included</td></tr>':''}
       <tr class="tr-tot"><td><strong>Monthly Retainer${d.pkg==='Startup'?' (from Month 2)':' — Tailored Pricing'}</strong></td><td>Ongoing</td><td class="pc">${d.pkg==='Startup'?d.fee:'Contact us for your custom quote'}</td></tr>
       <tr><td>Month 1 Total (includes setup fee)</td><td>First month only</td><td class="pc">${d.setup}</td></tr>
     </tbody>
@@ -1341,7 +1365,9 @@ function buildHTML(d){
       <tr><td>Strategy approach</td><td>Generic templates</td><td>Industry-specific</td></tr>
       <tr><td>GEO / AI Search</td><td>Not offered</td><td>Core deliverable</td></tr>
       <tr><td>Tool costs</td><td>Passed to client</td><td>Included in retainer</td></tr>
-      <tr><td>Hosting</td><td>Third-party dependency</td><td>Own infrastructure</td></tr>
+      <tr><td>Hosting &amp; Domains</td><td>Third-party dependency</td><td>Own infrastructure</td></tr>
+      <tr><td>CRM</td><td>HubSpot / Zoho (extra cost)</td><td>Leadar CRM (included)</td></tr>
+      <tr><td>Marketing Automation</td><td>Mailchimp / ActiveCampaign (extra cost)</td><td>Leadar Marketing Platform (included)</td></tr>
       <tr><td>Success metric</td><td>Traffic &amp; impressions</td><td>Qualified enquiries</td></tr>
       <tr><td>Contracts</td><td>12-month lock-in</td><td>Month-to-month after 6 months</td></tr>
       <tr><td>Asset ownership</td><td>Agency retains assets</td><td>You own everything</td></tr>
@@ -1349,7 +1375,7 @@ function buildHTML(d){
     </tbody>
   </table>
   <div class="twocol" style="margin-top:16px">
-    <div class="card nc"><div class="card-t">Our Infrastructure Advantage</div><div class="card-b">Leadar.Digital operates its own hosting platform and domain registrar. Your site runs on infrastructure we control — faster deployments, no third-party delays, no hosting costs passed on. Included in your retainer.</div></div>
+    <div class="card nc"><div class="card-t">Our Platform Advantage</div><div class="card-b">Leadar operates its own hosting, domain registration, CRM, and marketing automation platform. Your entire digital infrastructure runs under one roof — one invoice, one support contact, no costs fragmented across multiple vendors. Included in your retainer where selected.</div></div>
     <div class="card"><div class="card-t">Our Commitments</div><div class="card-b">✓ You own all assets — content, accounts, domain, analytics. Walk away with everything.<br><br>✓ Month-to-month after the 6-month pilot. We earn your business every month.<br><br>✓ If it's not working by Month 6, we'll say so honestly.</div></div>
   </div>
 </div>
@@ -1361,7 +1387,7 @@ function buildHTML(d){
     <tbody>
       <tr><td style="width:80px;background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 1</td><td>Sign and return this proposal, or confirm acceptance by email to <strong>hello@leadar.digital</strong></td></tr>
       <tr><td style="background:var(--navy);color:var(--teal);font-weight:700;text-align:center">STEP 2</td><td>First invoice issued. Onboarding begins within 48 hours of payment.</td></tr>
-      <tr><td style="background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 3</td><td>Share access credentials — Google Search Console, GA4, CMS, existing ad accounts.</td></tr>
+      <tr><td style="background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 3</td><td>Share access credentials — Google Search Console, GA4, CMS, existing ad accounts. We also onboard you to Leadar CRM and Leadar Marketing Platform at this step.</td></tr>
       <tr><td style="background:var(--navy);color:var(--teal);font-weight:700;text-align:center">STEP 4</td><td>Onboarding call with Khurram — finalise priorities, confirm Month 1 action plan.</td></tr>
       <tr><td style="background:var(--teal);color:var(--navy);font-weight:700;text-align:center">STEP 5</td><td>Technical audit complete and Otterly.ai GEO monitoring live within 7 days.</td></tr>
     </tbody>
@@ -1449,8 +1475,8 @@ function loadJNS(){
   sv('f_voice','Friendly, reassuring, and transparent. We want homeowners to feel like they\'ve found a contractor they can trust — like getting a renovation recommendation from a friend who\'s already done it. No jargon, no overselling, no pressure.');
   sv('f_avoid_t','Competitor brand names, claims about "lowest price guaranteed" without data, property investment advice, anything outside their renovation and aircon service scope');
   setC('cf_bl');setC('cf_ig');setC('cf_ba');setC('cf_vd');setC('cf_gd');
-  setR('cms','Wix');setR('host','Leadar.Digital managed hosting');
-  sv('f_tech','Current Wix site has significant SEO limitations — cannot edit robots.txt, no custom schema markup, no blog with proper SEO architecture, slow mobile load (~6–7 seconds). GA4 not installed. Google Search Console not set up. Recommend migrating to WordPress on Leadar.Digital managed hosting as part of Month 1 scope.');
+  setR('cms','Wix');setR('host','Leadar managed hosting');setR('crm','Leadar CRM');setR('map','Leadar Marketing Platform');setR('domain','Leadar domain registration');
+  sv('f_tech','Current Wix site has significant SEO limitations — cannot edit robots.txt, no custom schema markup, no blog with proper SEO architecture, slow mobile load (~6–7 seconds). GA4 not installed. Google Search Console not set up. Recommend migrating to WordPress on Leadar Managed Hosting as part of Month 1. Onboard to Leadar CRM and Leadar Marketing Platform simultaneously.');
   sv('f_fee','SGD 2,150/month');sv('f_setup','SGD 5,380 one-time (Website: SGD 4,388 + Branding: SGD 992)');
   setR('ct','6-Month Pilot');setR('pt','Net 15');
   sv('f_inv','Jane — jnsdesignbuild.sales@gmail.com');sv('f_valid','30 days from 21 February 2026');
@@ -1493,7 +1519,7 @@ const PKG_DEFAULTS = {
     {name:'Content Marketing Strategy',role:'SEO Strategist',hrs:10,months:[1,4,7,10]},
     {name:'Email Marketing Campaigns & Automation',role:'Copywriter',hrs:12,months:[2,3,4,5,6,7,8,9,10,11,12]},
     {name:'Telemarketing & Outbound Call Campaigns',role:'Account Manager',hrs:16,months:[2,3,4,5,6,7,8,9,10,11,12]},
-    {name:'Lead Nurturing & CRM Integration',role:'Technical SEO',hrs:8,months:[1,2]},
+    {name:'Lead Nurturing & Leadar CRM Integration',role:'Technical SEO',hrs:8,months:[1,2]},
     {name:'Monthly Reporting + Strategy Call',role:'Account Manager',hrs:6,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
   ],
   Growth: [
@@ -1507,7 +1533,7 @@ const PKG_DEFAULTS = {
     {name:'Content Marketing Strategy',role:'SEO Strategist',hrs:12,months:[1,4,7,10]},
     {name:'Email Marketing Campaigns & Automation',role:'Copywriter',hrs:14,months:[2,3,4,5,6,7,8,9,10,11,12]},
     {name:'Telemarketing & Outbound Call Campaigns',role:'Account Manager',hrs:16,months:[2,3,4,5,6,7,8,9,10,11,12]},
-    {name:'Lead Nurturing & CRM Integration',role:'Technical SEO',hrs:8,months:[1,2]},
+    {name:'Lead Nurturing & Leadar CRM Integration',role:'Technical SEO',hrs:8,months:[1,2]},
     {name:'Online Reputation Management (ORM)',role:'Account Manager',hrs:10,months:[1,2,3,4,5,6,7,8,9,10,11,12]},
     {name:'Public Relations & Media Outreach',role:'Copywriter',hrs:14,months:[2,3,4,5,6,7,8,9,10,11,12]},
     {name:'Press & Editorial Placement Strategy',role:'Copywriter',hrs:10,months:[2,4,6,8,10,12]},
